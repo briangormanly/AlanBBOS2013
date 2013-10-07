@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="scripts/os/|scripts/host/|scripts/" kind="src" path=""/>
+	<classpathentry excluding="os/|host/" kind="src" path="scripts"/>
+	<classpathentry kind="src" path="scripts/host"/>
+	<classpathentry kind="src" path="scripts/os"/>
+	<classpathentry kind="con" path="org.eclipse.wst.jsdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path=""/>
+</classpath>
