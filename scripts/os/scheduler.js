@@ -37,7 +37,6 @@ function Scheduler() {
 		// for now it is just first in, first out scheduling
 		// look for the first process with a READY flag
 		for(i = 0; i < _Processes.length; i++) {
-			alert(_Processes[i].state);
 			if(_Processes[i].state == P_READY) {
 				return _Processes[i];
 			}
