@@ -113,7 +113,7 @@ function Cpu() {
 				break;
 			case "AD":
 				//Load the accumulator from memory 
-				this.opCode = loadAccMem;
+				this.opCode = loadAccMemDirect;
 				break;
 			case "8D":
 				//Store the accumulator in memory
@@ -185,5 +185,52 @@ function Cpu() {
     function loadAccConst() {
     	this.acc = _MemoryManager.getNextByte(this.block, ++this.pc);
     }
+    
+    function loadAccMemDirect() {
+    	// Get the next 2 memory locations
+		var first = _MemoryManager.getNextByte(this.block, ++this.pc);
+		var second = _MemoryManager.getNextByte(this.block, ++this.pc);
+		
+		// concatinate (reverse order)
+		var address = (second + first);
+		alert(address);
+		
+		// covert hex to decimal
+		var decAddress = _MemoryManager.convertHexToDec(address);
+		
+		// get the contents of the memory location and put in the accumulator
+		this.acc = _Memory[decAddress];
+		//alert(this.acc + " is the value in the accumulator");
+    	
+    }
+    
+    
+
+    function storeAccInMem() {
+    	// Get the next 2 memory locations
+		var first = _MemoryManager.getNextByte(this.block, ++this.pc);
+		var second = _MemoryManager.getNextByte(this.block, ++this.pc);
+		
+		// concatinate (reverse order)
+		var address = (second + first);
+		
+		// covert hex to decimal
+		var decAddress = _MemoryManager.convertHexToDec(address);
+		//alert(decAddress + " (2) hex was : " + address);
+		
+		
+		// Convert value of ACC to hex
+		var hex = this.acc.toString(16).toUpperCase();
+		// Format byte properly
+		if( hex.length === 1) {
+			hex = "0" + hex;
+		}
+			
+		// Place value of ACC in hex byte form in memory
+		_Memory[decAddress] = hex;
+
+    }
+    
+    
     
 }

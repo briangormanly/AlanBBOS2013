@@ -22,6 +22,7 @@ function MemoryManager() {
     		this.blockStatus[i] = null;
     	}
     };
+	
     
     // Attempt to allocate a new block of memory
     this.alloc = function(pcb) {
@@ -80,6 +81,27 @@ function MemoryManager() {
     this.getNextByte = function(block, pc) {
     	return _Memory[+block + +pc];
     };
+    
+    /**
+     * Translate a hex number to decimal
+     */
+	this.convertHexToDec = function(hex) {
+		var dec = parseInt(hex, 16);
+		
+		return dec;
+	}
+	
+	/**
+	 * check that the address is within the valid range of memory addresses
+	 */
+	this.isValid = function(address) {
+		// Get base and limit addresses
+		var base = _CurrentProcess.base;
+		var limit = _CurrentProcess.limit;
+		// Make sure address is between those bounds
+		return ( address >= base && address <= limit );
+	}
+	
     
     
 }
