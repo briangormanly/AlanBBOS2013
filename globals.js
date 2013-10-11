@@ -20,7 +20,7 @@ var TIMER_IRQ = 0;  // Pages 23 (timer), 9 (interrupts), and 561 (interrupt prio
                     // NOTE: The timer is different from hardware/host clock pulses. Don't confuse these.
 var KEYBOARD_IRQ = 1;  
 
-var TOTAL_MEMORY = 1536;		// total memory size in bytes.
+var TOTAL_MEMORY = 768;		// total memory size in bytes.
 var MAX_PROGRAM_SIZE = 256;	// largest size available in memory to load a program
 
 // States of the PCB
