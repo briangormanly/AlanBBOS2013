@@ -266,8 +266,8 @@ function Cpu() {
     function compareXReg() {
     	// compare the containts of the x reg with the next byte
     	var addval = _Memory[this.getTwoBytesDec()];
-    	alert(addval);
-    	if(this.x == _Memory[this.getTwoBytesDec()]) {
+
+    	if(this.x == addval) {
     		// if they are the same put the containts of the x reg is the z reg
     		this.z = 1;
     	}
