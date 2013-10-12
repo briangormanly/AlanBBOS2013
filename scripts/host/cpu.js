@@ -280,12 +280,17 @@ function Cpu() {
     function branchXBytes() {
     	// check to see if the z flag is eq to x
     	if(this.z == 0) {
+    		// get the value to increment the pc
+    		var valToAdd = this.getNextByteDec();
+    		//alert(valToAdd);
+    		//get value in memory location specified
+    		//alert("value is :" + value + " from memory location : " + operand);
     		// if the z flag is 0 branch by changing the pc to the value in the next address
-    		this.pc = (this.getNextByteDec() - 1);
+    		this.pc += valToAdd;
     	}
     	else {
-    		// condition satified continue on
-    		this.pc++;
+    		// condition satified continue on skiping the destination
+    		this.pc += 2;
     	}
     }
     
@@ -301,5 +306,20 @@ function Cpu() {
     	var value = _MemoryManager.convertHexToDec(_Memory[address]);
     	_Memory[address] = this.decTo2sComp(value + 1);
     }
+    
+    function sysCall() {
+    	// check to see what value is in the x register
+    	// if the value is 1 then print the y reg value
+    	// if the value is 2 then get the 00 terminated string at the address in the y reg
+    	if(this.x == 1) {
+    		// display the contents of the y reg
+    		_StdIn.displayTextOnNewLine(this.y + " >");
+    	}
+    	else if(this.x == 2) {
+    		
+    	}
+    	
+    }
+    
     
 }
