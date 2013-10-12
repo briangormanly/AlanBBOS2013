@@ -90,6 +90,9 @@ function Cpu() {
 
         // update the UI with the CPU register statuses
         hostDivCPU();
+        
+        // update the memory veiw
+        hostDivMemory();
     };
     
     // fetch the instruction from memory
@@ -181,54 +184,86 @@ function Cpu() {
     	this.opCode();
     };
     
+    /**
+     * Helper function to get the next byte from memory and return hex value
+     */
+	this.getNextByteHex = function() {
+		return _MemoryManager.getNextByte(this.block, ++this.pc);
+	}
+	
+	/**
+	 * Helper function to get the next byte from memory and return the decimal value
+	 */
+	this.getNextByteDec = function() {
+		return _MemoryManager.convertHexToDec(this.getNextByteHex());
+	}
+	
+    /**
+     * Helper function to get the next two bytes from memory and return the hex value
+     */
+	this.getTwoBytesHex = function() {
+		var first = _MemoryManager.getNextByte(this.block, ++this.pc);
+		var second = _MemoryManager.getNextByte(this.block, ++this.pc);
+		
+		// concatinate (reverse order)
+		return (second + first);
+	}
+	
+	/**
+	 * Helper function to get the next two bytes from memory and retun the decimal value
+	 */
+	this.getTwoBytesDec = function() {
+		 return _MemoryManager.convertHexToDec(this.getTwoBytesHex());
+	}
+	
+    
     
     function loadAccConst() {
-    	this.acc = _MemoryManager.getNextByte(this.block, ++this.pc);
+    	this.acc = this.getNextByteHex();
     }
     
     function loadAccMemDirect() {
-    	// Get the next 2 memory locations
-		var first = _MemoryManager.getNextByte(this.block, ++this.pc);
-		var second = _MemoryManager.getNextByte(this.block, ++this.pc);
-		
-		// concatinate (reverse order)
-		var address = (second + first);
-		alert(address);
-		
-		// covert hex to decimal
-		var decAddress = _MemoryManager.convertHexToDec(address);
-		
 		// get the contents of the memory location and put in the accumulator
-		this.acc = _Memory[decAddress];
+		this.acc = _Memory[this.getTwoBytesDec()];
 		//alert(this.acc + " is the value in the accumulator");
-    	
+
     }
     
     
-
     function storeAccInMem() {
-    	// Get the next 2 memory locations
-		var first = _MemoryManager.getNextByte(this.block, ++this.pc);
-		var second = _MemoryManager.getNextByte(this.block, ++this.pc);
-		
-		// concatinate (reverse order)
-		var address = (second + first);
-		
-		// covert hex to decimal
-		var decAddress = _MemoryManager.convertHexToDec(address);
-		//alert(decAddress + " (2) hex was : " + address);
-		
-		
-		// Convert value of ACC to hex
-		var hex = this.acc.toString(16).toUpperCase();
-		// Format byte properly
-		if( hex.length === 1) {
-			hex = "0" + hex;
-		}
-			
-		// Place value of ACC in hex byte form in memory
-		_Memory[decAddress] = hex;
+		_Memory[this.getTwoBytesDec()] = this.acc;
 
+    }
+    
+    
+    function loadXRegWithConst() {
+    	this.x = this.getNextByteDec();
+    }
+    
+    function compareXReg() {
+    	// compare the containts of the x reg with the next byte
+    	if(this.x == this.getTwoBytesHex()) {
+    		// if they are the same put the containts of the x reg is the z reg
+    		this.z = this.x;
+    	}
+    	else {
+    		// else z reg = 0
+    		this.z = 0;
+    	}
+    }
+    
+    function branchXBytes() {
+    	// check to see if the z flag is 0
+    	if(this.z == this.x) {
+    		// if the z flag is 0 branch by changing the pc to the value in the next address
+    		this.pc = this.getNextByteDec();
+    	}
+    	else {
+    		// condition satified continue on
+    		this.pc++;
+    	}
+    	
+    	
     }
     
     
