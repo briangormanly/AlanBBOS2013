@@ -116,7 +116,7 @@ function Cpu() {
 				break;
 			case "AD":
 				//Load the accumulator from memory 
-				this.opCode = loadAccMemDirect;
+				this.opCode = loadAccFromMem;
 				break;
 			case "8D":
 				//Store the accumulator in memory
@@ -216,13 +216,19 @@ function Cpu() {
 		 return _MemoryManager.convertHexToDec(this.getTwoBytesHex());
 	}
 	
+	/**
+	 * Convert a decimal value passed in to 2's complement binary.
+	 */
+    this.decTo2sComp = function(dec) {
+    	
+    }
     
     
     function loadAccConst() {
     	this.acc = this.getNextByteHex();
     }
     
-    function loadAccMemDirect() {
+    function loadAccFromMem() {
 		// get the contents of the memory location and put in the accumulator
 		this.acc = _Memory[this.getTwoBytesDec()];
 		//alert(this.acc + " is the value in the accumulator");
@@ -240,11 +246,30 @@ function Cpu() {
     	this.x = this.getNextByteDec();
     }
     
+    function loadXRegFromMem() {
+    	this.x = _Memory[this.getTwoBytesDec()];
+    }
+    
+    function loadYRegWithConst() {
+    	this.y = this.getNextByteDec();
+    }
+    
+    function loadYRegFromMem() {
+    	this.y = _Memory[this.getTwoBytesDec()];
+    }
+    
+    function noOperation() {
+    	this.pc++;
+    }
+    
+    
     function compareXReg() {
     	// compare the containts of the x reg with the next byte
-    	if(this.x == this.getTwoBytesHex()) {
+    	var addval = _Memory[this.getTwoBytesDec()];
+    	alert(addval);
+    	if(this.x == _Memory[this.getTwoBytesDec()]) {
     		// if they are the same put the containts of the x reg is the z reg
-    		this.z = this.x;
+    		this.z = 1;
     	}
     	else {
     		// else z reg = 0
@@ -253,19 +278,28 @@ function Cpu() {
     }
     
     function branchXBytes() {
-    	// check to see if the z flag is 0
-    	if(this.z == this.x) {
+    	// check to see if the z flag is eq to x
+    	if(this.z == 0) {
     		// if the z flag is 0 branch by changing the pc to the value in the next address
-    		this.pc = this.getNextByteDec();
+    		this.pc = (this.getNextByteDec() - 1);
     	}
     	else {
     		// condition satified continue on
     		this.pc++;
     	}
-    	
-    	
     }
     
+    function sysBreak() {
+    	this.isExecuting = false;
+    	this.pc = 0;
+    }
     
+    function incByteValue() {
+    	// get the address of the value to increment
+    	var address = this.getTwoBytesDec();
+    	
+    	var value = _MemoryManager.convertHexToDec(_Memory[address]);
+    	_Memory[address] = this.decTo2sComp(value + 1);
+    }
     
 }
