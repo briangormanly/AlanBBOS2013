@@ -243,7 +243,9 @@ function Cpu() {
     
     
     function loadXRegWithConst() {
-    	this.x = this.getNextByteDec();
+    	var value = this.getNextByteDec();
+    	//alert("load x : " + value + " at : " + this.pc);
+    	this.x = value;
     }
     
     function loadXRegFromMem() {
@@ -268,11 +270,13 @@ function Cpu() {
     	var addval = _Memory[this.getTwoBytesDec()];
 
     	if(this.x == addval) {
-    		// if they are the same put the containts of the x reg is the z reg
+    		//alert("x is : " + this.x + " and value is " + addval + "z is now 1");
+    		// if make the z flag one
     		this.z = 1;
     	}
     	else {
     		// else z reg = 0
+    		//alert("x is : " + this.x + " and value is " + addval + "z is now 0");
     		this.z = 0;
     	}
     }
@@ -282,15 +286,19 @@ function Cpu() {
     	if(this.z == 0) {
     		// get the value to increment the pc
     		var valToAdd = this.getNextByteDec();
-    		//alert(valToAdd);
-    		//get value in memory location specified
-    		//alert("value is :" + value + " from memory location : " + operand);
-    		// if the z flag is 0 branch by changing the pc to the value in the next address
+    		
     		this.pc += valToAdd;
+    		
+    		// check to see if we are going backwards
+    		if(this.pc > MAX_PROGRAM_SIZE) {
+    			this.pc -= MAX_PROGRAM_SIZE;
+    		}
+    		
+    		
     	}
     	else {
     		// condition satified continue on skiping the destination
-    		this.pc += 2;
+    		this.pc += 1;
     	}
     }
     
@@ -311,15 +319,41 @@ function Cpu() {
     	// check to see what value is in the x register
     	// if the value is 1 then print the y reg value
     	// if the value is 2 then get the 00 terminated string at the address in the y reg
+    	//alert("x check: " + this.x);
     	if(this.x == 1) {
     		// display the contents of the y reg
-    		_StdIn.displayTextOnNewLine(this.y + " >");
+    		_StdIn.displayTextOnNewLine(this.y);
     	}
     	else if(this.x == 2) {
+    		// get the starting address from the y register
+    		var outAddress = this.y;
+    		
+    		// loop through memory and output until terminator 00 is reached
+    		while(_Memory[outAddress] != 00) {
+    			// Turn byte into a decimal integer
+    			keyCode = parseInt(_Memory[outAddress], 16);
+    			chr = String.fromCharCode(keyCode);
+
+    			// output to console
+    			_StdIn.displayText(chr);
+    			// Increment the address
+    			outAddress++;
+    		}
     		
     	}
     	
+    	_StdIn.displayTextOnNewLine(">");
+    	
     }
     
+    
+    function addWithCarry() {
+    	// Add contents of the memory location and the contents of the ACC
+    	var value = _Memory[this.getTwoBytesDec()];
+    	//alert("add with carry : " + value + "to acc: " + this.acc);
+		this.acc = parseInt(this.acc) + parseInt(value, 16);
+		//alert("acc rusult: "+ this.acc);
+    	
+    }
     
 }
