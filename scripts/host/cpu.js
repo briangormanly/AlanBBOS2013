@@ -85,7 +85,10 @@ function Cpu() {
         	this.currentProcess.block = this.block;
         	
         	// set back to ready
-        	this.currentProcess.state = P_READY;
+        	if(this.currentProcess.state != P_TERMINATED) {
+        		this.currentProcess.state = P_READY;
+        	}
+        	
         	
         	// send the scheduler back the state of the registers
         	_Scheduler.updateProcess(this.currentProcess);
@@ -106,14 +109,8 @@ function Cpu() {
     // fetch the instruction from memory
     this.fetch = function() {
     	// load the op codet
-    	alert("fetching instruction at pc " + this.pc + " block : " + this.block);
+    	//alert("fetching instruction at pc " + this.pc + " block : " + this.block);
     	this.currentInstruction = _MemoryManager.getNextByte(this.block, this.pc);
-    	
-    	if(this.currentInstruction == "00") {
-    		this.currentProcess.state = P_TERMINATED;
-    		//alert("Process " + this.currentProcess.pid + " state: " + this.currentProcess.state);
-    		this.isExecuting = false;
-    	}
     	
     };
     
@@ -317,6 +314,8 @@ function Cpu() {
     function sysBreak() {
     	this.isExecuting = false;
     	this.pc = 0;
+    	this.currentProcess.state = P_TERMINATED;
+
     }
     
     function incByteValue() {

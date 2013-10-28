@@ -26,6 +26,7 @@ function Scheduler() {
      */
 	this.updateProcess = function(pcb) {
 		_Processes[pcb.pid] = pcb;
+		alert("updated pid " + pcb.pid + " state: " + _Processes[pcb.pid].state);
 	}
 	
     
@@ -38,7 +39,7 @@ function Scheduler() {
 		// for now it is just first in, first out scheduling
 		// look for the first process with a READY flag
 		for(i=0; i < _Processes.length; i++) {
-			alert("state for procces " + i + " is " + _Processes[i].state);
+			//alert("state for procces " + i + " is " + _Processes[i].state);
 			if(_Processes[i].state === P_READY) {
 				//alert("sending " + i);
 				return _Processes[i];
