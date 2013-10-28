@@ -30,6 +30,7 @@ var P_READY	= 2; // Process added to ready queue awaiting execution
 var P_RUNNING = 3; // Process currently executing
 var P_TERMINATED = 4; // Process finished executing
 
+var lastPID = 0;
 
 
 

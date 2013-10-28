@@ -46,18 +46,23 @@ function Cpu() {
         
         
         // check with the scheduler for a process to run
-        var currentProcess = _Scheduler.processToRun();
+        this.currentProcess = _Scheduler.processToRun();
+        
+        this.currentProcess.state = P_RUNNING;
+        
+        // log the process running
+        //alert("process running : " + this.currentProcess.pid);
 
         // check to see if there is a valid process
-        if(currentProcess != -1) {
+        if(this.currentProcess != -1) {
         	// have a process to work on 
         	// load the registers from the PCB
-        	this.pc = currentProcess.pc;
-        	this.acc = currentProcess.acc;
-        	this.x = currentProcess.x;
-        	this.y = currentProcess.y;
-        	this.z = currentProcess.z;
-        	this.block = currentProcess.block;
+        	this.pc = this.currentProcess.pc;
+        	this.acc = this.currentProcess.acc;
+        	this.x = this.currentProcess.x;
+        	this.y = this.currentProcess.y;
+        	this.z = this.currentProcess.z;
+        	this.block = this.currentProcess.block;
         	
         	// fetch
         	this.fetch();
@@ -72,15 +77,18 @@ function Cpu() {
         	this.pc++;
         	
         	//save the registers states back to the pcb
-        	currentProcess.pc = this.pc;
-        	currentProcess.acc = this.acc;
-        	currentProcess.x = this.x;
-        	currentProcess.y = this.y;
-        	currentProcess.z = this.z;
-        	currentProcess.block = this.block;
+        	this.currentProcess.pc = this.pc;
+        	this.currentProcess.acc = this.acc;
+        	this.currentProcess.x = this.x;
+        	this.currentProcess.y = this.y;
+        	this.currentProcess.z = this.z;
+        	this.currentProcess.block = this.block;
+        	
+        	// set back to ready
+        	this.currentProcess.state = P_READY;
         	
         	// send the scheduler back the state of the registers
-        	_Scheduler.updateProcess(currentProcess);
+        	_Scheduler.updateProcess(this.currentProcess);
         }
         else {
         	// no valid process, stop until another is loaded
@@ -98,9 +106,12 @@ function Cpu() {
     // fetch the instruction from memory
     this.fetch = function() {
     	// load the op codet
+    	alert("fetching instruction at pc " + this.pc + " block : " + this.block);
     	this.currentInstruction = _MemoryManager.getNextByte(this.block, this.pc);
     	
     	if(this.currentInstruction == "00") {
+    		this.currentProcess.state = P_TERMINATED;
+    		//alert("Process " + this.currentProcess.pid + " state: " + this.currentProcess.state);
     		this.isExecuting = false;
     	}
     	
@@ -181,6 +192,7 @@ function Cpu() {
     
     // execute the instrution
     this.execute = function() {
+    	//alert("opcode = " + this.opCode);
     	this.opCode();
     };
     

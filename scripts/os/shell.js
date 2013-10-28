@@ -114,6 +114,9 @@ function shellInit() {
     				// just for testing
 	        		//thisPCB.x = "44";
     				
+    				// set the state to loaded
+	        		thisPCB.state = P_LOADED;
+    				
     				// add the new created process to the processes array
 	        		_Processes[lastPID] = thisPCB;
 	    			

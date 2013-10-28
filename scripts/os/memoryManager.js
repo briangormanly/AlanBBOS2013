@@ -79,7 +79,7 @@ function MemoryManager() {
      * Gets a instruction from memory
      */
     this.getNextByte = function(block, pc) {
-    	return _Memory[+block + +pc];
+    	return _Memory[(+block * MAX_PROGRAM_SIZE) + +pc];
     };
     
     /**

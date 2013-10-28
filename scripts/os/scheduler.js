@@ -17,6 +17,7 @@ function Scheduler() {
     this.requestRun = function(pid) {
     	
     	//set the process state to ready
+    	//alert("setting pid " + pid + " to ready!");
     	_Processes[pid].state = P_READY;
     }
     
@@ -36,8 +37,10 @@ function Scheduler() {
 		
 		// for now it is just first in, first out scheduling
 		// look for the first process with a READY flag
-		for(i = 0; i < _Processes.length; i++) {
-			if(_Processes[i].state == P_READY) {
+		for(i=0; i < _Processes.length; i++) {
+			alert("state for procces " + i + " is " + _Processes[i].state);
+			if(_Processes[i].state === P_READY) {
+				//alert("sending " + i);
 				return _Processes[i];
 			}
 			
