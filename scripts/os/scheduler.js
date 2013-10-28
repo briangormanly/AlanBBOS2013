@@ -26,7 +26,7 @@ function Scheduler() {
      */
 	this.updateProcess = function(pcb) {
 		_Processes[pcb.pid] = pcb;
-		alert("updated pid " + pcb.pid + " state: " + _Processes[pcb.pid].state);
+		//alert("updated pid " + pcb.pid + " state: " + _Processes[pcb.pid].state);
 	}
 	
     

@@ -191,6 +191,26 @@ function shellInit() {
     this.commandList[this.commandList.length] = sc;
     
     
+    // runall
+    sc = new ShellCommand();
+    sc.command = "runall";
+    sc.description = "- Runs all of the user programs that are loaded in memory";
+    sc.function = (function(args){
+    	// loop through all available programs
+    	for(i=0; i < _Processes.length; i++) {
+    		// check to see if this Process is ready to run
+    		if(_Processes[i].state === P_LOADED) {
+    			// run this process
+    			// set the CPU to running
+    			_CPU.isExecuting = true;
+    			
+    			// ask the schuduler to schedule the process
+    			_Scheduler.requestRun(_Processes[i].pid);
+    		}
+    	}
+    });
+    this.commandList[this.commandList.length] = sc;
+    
     // ver
     sc = new ShellCommand();
     sc.command = "ver";

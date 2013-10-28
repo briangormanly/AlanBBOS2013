@@ -278,7 +278,7 @@ function Cpu() {
     	// compare the containts of the x reg with the next byte
     	var addval = _Memory[this.getTwoBytesDec()];
 
-    	if(this.x == addval) {
+    	if(this.x === addval) {
     		//alert("x is : " + this.x + " and value is " + addval + "z is now 1");
     		// if make the z flag one
     		this.z = 1;
@@ -292,7 +292,7 @@ function Cpu() {
     
     function branchXBytes() {
     	// check to see if the z flag is eq to x
-    	if(this.z == 0) {
+    	if(this.z === 0) {
     		// get the value to increment the pc
     		var valToAdd = this.getNextByteDec();
     		
@@ -331,11 +331,11 @@ function Cpu() {
     	// if the value is 1 then print the y reg value
     	// if the value is 2 then get the 00 terminated string at the address in the y reg
     	//alert("x check: " + this.x);
-    	if(this.x == 1) {
+    	if(this.x === 1) {
     		// display the contents of the y reg
     		_StdIn.displayTextOnNewLine(this.y);
     	}
-    	else if(this.x == 2) {
+    	else if(this.x === 2) {
     		// get the starting address from the y register
     		var outAddress = this.y;
     		
