@@ -47,7 +47,14 @@ function Cpu() {
         
         
         // check with the scheduler for a process to run
-        this.currentProcess = _Scheduler.processToRun();
+        _Scheduler.processToRun();
+        /*
+        if(this.currentProcess == null) {
+        	this.isExecuting = false;
+        	return;
+        }
+        */
+        
         
         this.currentProcess.state = P_RUNNING;
         
@@ -319,8 +326,6 @@ function Cpu() {
     }
     
     function sysBreak() {
-    	//this.isExecuting = false;
-    	this.pc = 0;
     	this.state = P_TERMINATED;
 
     }

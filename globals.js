@@ -30,6 +30,13 @@ var P_READY	= 1; // Process added to ready queue awaiting execution
 var P_RUNNING = 0; // Process currently executing
 var P_TERMINATED = 4; // Process finished executing
 
+// scheduler
+var ROUND_ROBIN = 0; // Round Robin Scheduleing 
+var FIFO = 1; // First in, first out scheduling
+
+var SCHEDULER = FIFO; // default to  ...
+var quanta = 6; // default the quanta to 6
+
 var lastPID = 0;
 
 

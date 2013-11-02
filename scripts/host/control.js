@@ -118,13 +118,16 @@ function hostDivPCB() {
 	
 	// get a local copy of the processes array so we can sort
 	thisProcesses = _Processes;
+
+	//sort call
+	//var thisProcesses = quickSort(thisProcesses, 0, thisProcesses.length - 1);
 	
-	// check that there is something to sort
-	if(thisProcesses > 1) {
-		// use the really cool quick sort algorithm i added to the util.js
-		//thisProcesses = quickSortPartition(thisProcesses, thisProcesses.length);
-		
-	}
+	//alert(thisProcesses + " length: " + thisProcesses.length);
+	
+	// use the really cool quick sort algorithm i added to the util.js
+	//thisProcesses = quickSortPartition(thisProcesses, thisProcesses.length);
+	
+	//alert("2:::: " + thisProcesses + " length: " + thisProcesses.length);
 	
 	// ouput the processes info
 	for(var i=0; i < thisProcesses.length; i++) {

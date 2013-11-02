@@ -36,22 +36,47 @@ function Scheduler() {
      */
 	this.processToRun = function() {
 		
+		// check to see what scheduling algorithm to use
+		switch(SCHEDULER) {
+			case FIFO:
+				fifo();
+				break;
+			case ROUND_ROBIN:
+				roundRobin();
+				break;
+		}
+	}
+	
+	// detirme process to run based on round robin out algorithm
+	// make the process the current process
+	function roundRobin() {
+		
+	}
+	
+	// detirme process to run based on FIFO out algorithm
+	// make the process the current process
+	function fifo() {
+		// track a flag that something is running
+		var flag = 0;
+		
 		// for now it is just first in, first out scheduling
 		// look for the first process with a READY flag
 		for(i=0; i < _Processes.length; i++) {
 			//alert("state for procces " + i + " is " + _Processes[i].state);
 			if(_Processes[i].state === P_READY) {
 				//alert("sending " + i);
-				return _Processes[i];
+				_CPU.isExecuting = true;
+				_CPU.currentProcess = _Processes[i];
+				flag++;
+				break;
 			}
 			
 		}
 		
-		// no ready process found
-		_CPU.isExecuting = false;
-		return -1;
-	
-
+		if(flag === 0) {
+			// no processes to run
+			_CPU.isExecuting = false;
+		}
 	}
 	
 }

@@ -41,6 +41,7 @@ function quickSortPartition(array, size) {
 	if(size < 2) return array;
 	
 	// get the last element as the pivot
+	//alert("pivot:" + array[size -1].state);
 	var pivot = array[size -1].state;
 	
 	var l=0;
@@ -91,6 +92,61 @@ function getStateName(state) {
 			break;
 	}
 	
+}
+
+function quickSort(items, left, right) {
+
+    var index;
+
+    if (items.length > 1) {
+
+        index = partition(items, left, right);
+
+        if (left < index - 1) {
+            quickSort(items, left, index - 1);
+        }
+
+        if (index < right) {
+            quickSort(items, index, right);
+        }
+
+    }
+
+    return items;
+}
+
+
+function partition(items, left, right) {
+
+    var pivot   = items[Math.floor((right + left) / 2)].state,
+        i       = left,
+        j       = right;
+
+
+    while (i <= j) {
+
+        while (items[i].state < pivot) {
+            i++;
+        }
+
+        while (items[j].state > pivot) {
+            j--;
+        }
+
+        if (i <= j) {
+            swap(items, i, j);
+            i++;
+            j--;
+        }
+    }
+
+    return i;
+}
+
+function swap(items, firstIndex, secondIndex){
+    var temp = items[firstIndex];
+    items[firstIndex] = items[secondIndex];
+    items[secondIndex] = temp;
 }
 
 
