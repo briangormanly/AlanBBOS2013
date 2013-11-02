@@ -35,3 +35,30 @@ function rot13(str) {   // An easy-to understand implementation of the famous an
     }
     return retVal;
 }
+
+function quickSortPartition(array, size) {
+	// check for end
+	if(size < 2) return array;
+	
+	// get the last element as the pivot
+	var pivot = array[size -1].state;
+	
+	var l=0;
+	var u=array[size -1];
+	
+	while (l < u) {
+		while(array[l].state < pivot) {
+			l += 1;
+		}
+		while(array[u].state > pivot) {
+			u -= 1;
+		}
+		var temp = array[l];
+		array[L] = array[u];
+		array[u] = temp;
+	}
+	quickSortPartition(array, l);
+	quickSortPartition(array[l+1], (size-l-1));
+	
+}
+

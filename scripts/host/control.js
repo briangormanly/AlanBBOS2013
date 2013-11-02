@@ -111,7 +111,30 @@ function hostDivMemory() {
 	}
 }
 
-
+//controls the output of the CPU info
+function hostDivPCB() {
+	// clear the pcb window
+	document.getElementById('taPCBstatus').innerHTML = "";
+	
+	// get a local copy of the processes array so we can sort
+	thisProcesses = _Processes;
+	
+	// check that there is something to sort
+	if(thisProcesses > 1) {
+		// use the really cool quick sort algorithm i added to the util.js
+		thisProcesses = quickSortPartition(thisProcesses, thisProcesses.length);
+		
+	}
+	
+	// ouput the processes info
+	for(i=0; i < thisProcesses.length; i++) {
+		document.getElementById('taPCBstatus').innerHTML += thisProcesses[i].pid;
+		document.getElementById('taPCBstatus').innerHTML += thisProcesses[i].name;
+		document.getElementById('taPCBstatus').innerHTML += thisProcesses[i].state;
+		document.getElementById('taPCBstatus').innerHTML += "<br/>";
+	}
+	
+}
 
 //
 // Control Events

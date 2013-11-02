@@ -16,6 +16,7 @@
 function Cpu() {
     this.pc = 0;     // Program Counter
     this.acc = 0;     // Accumulator
+    this.state = 0; // current process state
     this.x = 0;     // X register
     this.y = 0;     // Y register
     this.z = 0;     // Z-ero flag (Think of it as "isZero".)
@@ -59,6 +60,7 @@ function Cpu() {
         	// load the registers from the PCB
         	this.pc = this.currentProcess.pc;
         	this.acc = this.currentProcess.acc;
+        	this.state = this.currentProcess.state;
         	this.x = this.currentProcess.x;
         	this.y = this.currentProcess.y;
         	this.z = this.currentProcess.z;
@@ -73,12 +75,16 @@ function Cpu() {
         	// execute
         	this.execute();
         	
+        	// update the PCB view
+        	hostDivPCB();
+        	
         	// increment the pc
         	this.pc++;
         	
         	//save the registers states back to the pcb
         	this.currentProcess.pc = this.pc;
         	this.currentProcess.acc = this.acc;
+        	this.currentProcess.state = this.state;
         	this.currentProcess.x = this.x;
         	this.currentProcess.y = this.y;
         	this.currentProcess.z = this.z;
@@ -95,15 +101,16 @@ function Cpu() {
         }
         else {
         	// no valid process, stop until another is loaded
-        	this.isExecuting = false; 
+        	// this.isExecuting = false; 
         	
         }
-
-        // update the UI with the CPU register statuses
-        hostDivCPU();
         
-        // update the memory veiw
-        hostDivMemory();
+        // update the UI with the CPU register statuses
+    	hostDivCPU();
+    
+    	// update the memory veiw
+    	hostDivMemory();
+        
     };
     
     // fetch the instruction from memory
@@ -312,9 +319,9 @@ function Cpu() {
     }
     
     function sysBreak() {
-    	this.isExecuting = false;
+    	//this.isExecuting = false;
     	this.pc = 0;
-    	this.currentProcess.state = P_TERMINATED;
+    	this.state = P_TERMINATED;
 
     }
     

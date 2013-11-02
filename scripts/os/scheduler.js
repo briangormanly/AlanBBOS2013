@@ -48,6 +48,7 @@ function Scheduler() {
 		}
 		
 		// no ready process found
+		_CPU.isExecuting = false;
 		return -1;
 	
 

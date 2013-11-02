@@ -93,7 +93,15 @@ function krnOnCPUClockPulse()
     {
     	// update the clock
     	krnUpdateTime();
-       //krnTrace("Idle");
+       
+    	// update the PCB view
+        hostDivPCB();
+        
+        // update the UI with the CPU register statuses
+    	hostDivCPU();
+    
+    	// update the memory veiw
+    	hostDivMemory();
     }
 }
 
