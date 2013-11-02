@@ -7,6 +7,9 @@
 
 function Scheduler() {
 	
+	var quantaCount = 0;
+	var roundRobinProcess = 0;
+	
 	this.init = function() {
 		
     };
@@ -50,7 +53,45 @@ function Scheduler() {
 	// detirme process to run based on round robin out algorithm
 	// make the process the current process
 	function roundRobin() {
+		// check that there is a process to run
+		// create a flog
+		var flag = 0;
 		
+		// check to see if there is any process to run
+		for(i=0; i < _Processes.length; i++) {
+			if(_Processes[i].state === P_READY) {
+				flag++;
+			}
+		}
+		
+		// react to the flag
+		if(flag === 0) {
+			// no processes to run
+			_CPU.isExecuting = false;
+		}
+		else {
+
+			// check too see if we have reached the end of our quanta
+			if(quantaCount === quanta) {
+				// reset the quanta
+				quantaCount = 0;
+				
+				// move to the next process
+				roundRobinProcess++;
+			}
+			
+			// check to see if we are at the end of the available processes
+			if(roundRobinProcess === _Processes.length) {
+				roundRobinProcess = 0;
+			}
+			
+			// run the next process
+			_CPU.isExecuting = true;
+			_CPU.currentProcess = _Processes[roundRobinProcess];
+		
+			// increase the quanta
+			quantaCount++;
+		}
 	}
 	
 	// detirme process to run based on FIFO out algorithm
