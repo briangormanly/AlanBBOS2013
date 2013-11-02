@@ -122,15 +122,20 @@ function hostDivPCB() {
 	// check that there is something to sort
 	if(thisProcesses > 1) {
 		// use the really cool quick sort algorithm i added to the util.js
-		thisProcesses = quickSortPartition(thisProcesses, thisProcesses.length);
+		//thisProcesses = quickSortPartition(thisProcesses, thisProcesses.length);
 		
 	}
 	
 	// ouput the processes info
-	for(i=0; i < thisProcesses.length; i++) {
-		document.getElementById('taPCBstatus').innerHTML += thisProcesses[i].pid;
-		document.getElementById('taPCBstatus').innerHTML += thisProcesses[i].name;
-		document.getElementById('taPCBstatus').innerHTML += thisProcesses[i].state;
+	for(var i=0; i < thisProcesses.length; i++) {
+		document.getElementById('taPCBstatus').innerHTML += padString(thisProcesses[i].pid.toString(), 3);
+		document.getElementById('taPCBstatus').innerHTML += padString(thisProcesses[i].name.toString(), 12);
+		document.getElementById('taPCBstatus').innerHTML += padString(getStateName(thisProcesses[i].state).toString(), 10);
+		document.getElementById('taPCBstatus').innerHTML += padString(thisProcesses[i].pc.toString(), 4);
+		document.getElementById('taPCBstatus').innerHTML += padString(thisProcesses[i].acc.toString(), 4);
+		document.getElementById('taPCBstatus').innerHTML += padString(thisProcesses[i].x.toString(), 3);
+		document.getElementById('taPCBstatus').innerHTML += padString(thisProcesses[i].y.toString(), 3);
+		document.getElementById('taPCBstatus').innerHTML += padString(thisProcesses[i].z.toString(), 3);
 		document.getElementById('taPCBstatus').innerHTML += "<br/>";
 	}
 	

@@ -101,7 +101,7 @@ function krnOnCPUClockPulse()
     	hostDivCPU();
     
     	// update the memory veiw
-    	hostDivMemory();
+    	//hostDivMemory(); --- cpu intensive ???????
     }
 }
 

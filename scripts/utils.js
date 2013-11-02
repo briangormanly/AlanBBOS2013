@@ -62,3 +62,35 @@ function quickSortPartition(array, size) {
 	
 }
 
+// substring if necassary to retduce length to the max or
+// add empty space to a string to force a certain size
+function padString(str, totalLength) {
+	str = str.substring(0, totalLength);
+    for (var i = str.length; i <= totalLength; i++)
+        str += "&nbsp;";
+    return str;
+}
+
+// get the state text
+function getStateName(state) {
+	switch(state) {
+		case 0:
+			return "RUNNING";
+			break;
+		case 1:
+			return "READY";
+			break;
+		case 2:
+			return "LOADED";
+			break;
+		case 3:
+			return "NEW";
+			break;
+		case 4:
+			return "TERMINATED";
+			break;
+	}
+	
+}
+
+

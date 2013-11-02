@@ -121,7 +121,7 @@ function shellInit() {
 	        		_Processes[lastPID] = thisPCB;
 	    			
 	        		// output the PID to the console
-	        		_StdIn.displayTextOnNewLine("New process cerated, PID : " + thisPCB.pid + " name: " + thisPCB.name);
+	        		_StdIn.displayTextOnNewLine("New process created, PID : " + thisPCB.pid + " name: " + thisPCB.name);
 	        		
 	        		// increment the last pid
 	        		lastPID++;

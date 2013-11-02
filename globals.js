@@ -24,10 +24,10 @@ var TOTAL_MEMORY = 768;		// total memory size in bytes.
 var MAX_PROGRAM_SIZE = 256;	// largest size available in memory to load a program
 
 // States of the PCB
-var P_NEW = 0; // Process newly created
-var P_LOADED = 1; // Process loaded in memory
-var P_READY	= 2; // Process added to ready queue awaiting execution
-var P_RUNNING = 3; // Process currently executing
+var P_NEW = 3; // Process newly created
+var P_LOADED = 2; // Process loaded in memory
+var P_READY	= 1; // Process added to ready queue awaiting execution
+var P_RUNNING = 0; // Process currently executing
 var P_TERMINATED = 4; // Process finished executing
 
 var lastPID = 0;
