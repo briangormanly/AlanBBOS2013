@@ -68,10 +68,10 @@
              onclick="hostBtnReset_click(this);">
    </div>
 
-   <div id="divConsole" style="margin:4px; width:500px; height:500px; float:left;">
+   <div id="divConsole" style="margin:4px; width:500px; height:700px; float:left;">
       <canvas id="display"
               width="500px"
-              height="500px"
+              height="600px"
               tabindex="3">
       </canvas>
    </div>
@@ -116,7 +116,15 @@
       </label>
    </div>
    
-   <div id="divTaskBar" style="width:100%; background-color:white; margin-top:15px; text-align:center;">
+    <div id="divPCBstatus" style="position: absolute; top:540px; left:900px;">
+      <label>
+         PCB
+         <br>
+         <div name="taPCBstatus" id="taPCBstatus" style="height:120px; width:250px; overflow-y: scroll; background-color:white; font-family:monospace;"></div>
+      </label>
+   </div>
+   
+   <div id="divTaskBar" style="width:100%; position: absolute; top:700px; left:0px; background-color:white; margin-top:15px; text-align:center;">
    		
    		<label>
          Current Time: 
