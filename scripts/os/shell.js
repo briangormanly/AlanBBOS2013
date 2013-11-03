@@ -84,6 +84,53 @@ function shellInit() {
     			_StdIn.displayTextOnNewLine("Quantum must be set to 2 or greater!");
     		}
         }
+        else {
+        	_StdIn.displayTextOnNewLine("Set quantum to: " + quantum);
+        }
+        
+    });
+    this.commandList[this.commandList.length] = sc;
+    
+    // set scheduler
+    sc = new ShellCommand();
+    sc.command = "scheduler";
+    sc.description = "- Allows user to change Scheduler algorithm";
+    sc.function = (function(args){
+    	if (args.length > 0) {
+    		var algo = args[0].toUpperCase();
+    	
+    		switch(algo) {
+    			case "FIFO":
+    				SCHEDULER = FIFO;
+    				break;
+    			case "RR":
+    				SCHEDULER = ROUND_ROBIN;
+    				break;
+    			default:
+    				algo ="invalid: valid choices are FIFO and RR";
+    				break;
+    		}
+			quantum = algo;
+			_StdIn.displayTextOnNewLine("Set scheduler algorithm to:");
+			_StdIn.displayTextOnNewLine(algo);
+		
+		}
+		else {
+			var algo = "";
+		
+			switch(SCHEDULER) {
+			case FIFO:
+				algo = "Pre-emtive First In First Out (FIFO)";
+				break;
+			case ROUND_ROBIN:
+				algo = "Round Robin";
+				break;
+			}
+		
+			_StdIn.displayTextOnNewLine("Set scheduler algorithm to:");
+			_StdIn.displayTextOnNewLine(algo);
+		}
+        
     });
     this.commandList[this.commandList.length] = sc;
     
