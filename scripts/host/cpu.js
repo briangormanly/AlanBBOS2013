@@ -121,7 +121,7 @@ function Cpu() {
     this.fetch = function() {
     	// load the op codet
     	//alert("fetching instruction at pc " + this.pc + " block : " + this.block);
-    	this.currentInstruction = _MemoryManager.getNextByte(this.block, this.pc);
+    	this.currentInstruction = _MemoryManager.getByte(this, this.pc);
     	
     };
     
@@ -208,7 +208,7 @@ function Cpu() {
      * Helper function to get the next byte from memory and return hex value
      */
 	this.getNextByteHex = function() {
-		return _MemoryManager.getNextByte(this.block, ++this.pc);
+		return _MemoryManager.getByte(this, ++this.pc);
 	}
 	
 	/**
@@ -222,8 +222,8 @@ function Cpu() {
      * Helper function to get the next two bytes from memory and return the hex value
      */
 	this.getTwoBytesHex = function() {
-		var first = _MemoryManager.getNextByte(this.block, ++this.pc);
-		var second = _MemoryManager.getNextByte(this.block, ++this.pc);
+		var first = _MemoryManager.getByte(this, ++this.pc);
+		var second = _MemoryManager.getByte(this, ++this.pc);
 		
 		// concatinate (reverse order)
 		return (second + first);
@@ -277,7 +277,8 @@ function Cpu() {
     
     
     function storeAccInMem() {
-		_Memory[this.getTwoBytesDec()] = this.acc;
+		//_Memory[this.getTwoBytesDec()] = this.acc;
+    	_MemoryManager.writeByte(this, this.getTwoBytesDec(), this.acc);
 
     }
     
@@ -307,16 +308,21 @@ function Cpu() {
     
     function compareXReg() {
     	// compare the containts of the x reg with the next byte
-    	var addval = _Memory[this.getTwoBytesDec()];
+    	//var addval = _Memory[];
+    	// get the address of the memory location to read
+    	var address = this.getTwoBytesDec();
+
+    	// read the memory address
+    	var addval = _MemoryManager.getByte(this, address);
 
     	if(this.x === addval) {
-    		//alert("x is : " + this.x + " and value is " + addval + "z is now 1");
+    		//alert("x is : " + this.x + " and value is " + addval + " z is now 1");
     		// if make the z flag one
     		this.z = 1;
     	}
     	else {
     		// else z reg = 0
-    		//alert("x is : " + this.x + " and value is " + addval + "z is now 0");
+    		//alert("x is : " + this.x + " and value is " + addval + " z is now 0");
     		this.z = 0;
     	}
     }

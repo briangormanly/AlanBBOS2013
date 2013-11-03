@@ -78,9 +78,43 @@ function MemoryManager() {
     /**
      * Gets a instruction from memory
      */
-    this.getNextByte = function(block, pc) {
-    	return _Memory[(+block * MAX_PROGRAM_SIZE) + +pc];
+    this.getByte = function(pcb, location) {
+    	// check to see is the request to valid!
+    	if(+location > MAX_PROGRAM_SIZE) {
+    		// memeory access violation!
+    		// output to console
+    		_StdIn.displayText("Memory access violation! PID: " + pcb.pid + " attempted to access location: " + (+pcb.block * MAX_PROGRAM_SIZE) + +location);
+    		
+    		// end the process
+    		_CPU.state = P_TERMINATED;
+    		
+    	}
+    	else {
+    		// return the block of memory
+    		return _Memory[(+pcb.block * MAX_PROGRAM_SIZE) + +location];
+    	}
     };
+    
+    /**
+     * Write a byte to memory
+     */
+	this.writeByte = function(pcb, location, thisByte) {
+		// check to see is the request to valid!
+    	if(+location > MAX_PROGRAM_SIZE) {
+    		// memeory access violation!
+    		// output to console
+    		_StdIn.displayTextOnNewLine("Memory write access violation!");
+    		_StdIn.displayTextOnNewLine("PID: " + pcb.pid + " attempted access at: " + (+pcb.block * MAX_PROGRAM_SIZE) + +location)
+    		_StdIn.displayTextOnNewLine("Process ended unexpectedly.");
+    		// end the process
+    		_CPU.state = P_TERMINATED;
+    		
+    	}
+    	else {
+    		_Memory[(+pcb.block * MAX_PROGRAM_SIZE) + +location] = thisByte;
+    	}
+	}
+	
     
     /**
      * Translate a hex number to decimal
@@ -101,6 +135,8 @@ function MemoryManager() {
 		// Make sure address is between those bounds
 		return ( address >= base && address <= limit );
 	}
+	
+	
 	
     
     
