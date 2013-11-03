@@ -37,7 +37,7 @@ var FIFO = 1; // First in, first out scheduling
 var SCHEDULER = ROUND_ROBIN; // default to round robin
 //var SCHEDULER = FIFO; // default to pre-emtive FIFO
 
-var quanta = 6; // default the quanta to 6
+var quantum = 6; // default the quanta to 6
 
 var lastPID = 0;
 

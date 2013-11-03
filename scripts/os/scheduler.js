@@ -80,7 +80,7 @@ function Scheduler() {
 			if(_Processes[roundRobinProcess].state === P_READY) {
 
 				// check too see if we have reached the end of our quanta
-				if(quantaCount === (quanta - 1)) {
+				if(quantaCount === (quantum - 1)) {
 					// reset the quanta
 					quantaCount = 0;
 					

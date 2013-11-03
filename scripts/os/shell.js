@@ -69,6 +69,24 @@ function shellInit() {
     });
     this.commandList[this.commandList.length] = sc;
     
+    // set quantum
+    sc = new ShellCommand();
+    sc.command = "quantum";
+    sc.description = "- Allows user to change Round Robin quantum";
+    sc.function = (function(args){
+    	if (args.length > 0) {
+    		// check for minimum quantum
+    		if(args[0] > 1) {
+	    		quantum = args[0];
+	    		_StdIn.displayTextOnNewLine("Set quantum to: " + quantum);
+    		}
+    		else {
+    			_StdIn.displayTextOnNewLine("Quantum must be set to 2 or greater!");
+    		}
+        }
+    });
+    this.commandList[this.commandList.length] = sc;
+    
     // load
     sc = new ShellCommand();
     sc.command = "load";
