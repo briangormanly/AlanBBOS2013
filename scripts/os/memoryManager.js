@@ -83,10 +83,16 @@ function MemoryManager() {
     	if(+location > MAX_PROGRAM_SIZE) {
     		// memeory access violation!
     		// output to console
-    		_StdIn.displayText("Memory access violation! PID: " + pcb.pid + " attempted to access location: " + (+pcb.block * MAX_PROGRAM_SIZE) + +location);
+    		_StdIn.displayTextOnNewLine("Memory read access violation!");
+    		_StdIn.displayTextOnNewLine("PID: " + pcb.pid + " attempted access at: " + (+pcb.block * MAX_PROGRAM_SIZE) + +location);
+    		_StdIn.displayTextOnNewLine("Process ended unexpectedly.");
     		
     		// end the process
-    		_CPU.state = P_TERMINATED;
+    		pcb.state = P_TERMINATED;
+    		//_CPU.state = P_TERMINATED;
+    		//_CPU.currentProcess = P_TERMINATED;
+    		
+    		//alert(pcb.pid + " " + pcb.name + " " + pcb.state);
     		
     	}
     	else {
@@ -104,10 +110,12 @@ function MemoryManager() {
     		// memeory access violation!
     		// output to console
     		_StdIn.displayTextOnNewLine("Memory write access violation!");
-    		_StdIn.displayTextOnNewLine("PID: " + pcb.pid + " attempted access at: " + (+pcb.block * MAX_PROGRAM_SIZE) + +location)
+    		_StdIn.displayTextOnNewLine("PID: " + pcb.pid + " attempted access at: " + (+pcb.block * MAX_PROGRAM_SIZE) + +location);
     		_StdIn.displayTextOnNewLine("Process ended unexpectedly.");
+    		
     		// end the process
-    		_CPU.state = P_TERMINATED;
+    		//alert(pcb.pid + " " + pcb.name + " " + pcb.state);
+    		pcb.state = P_TERMINATED;
     		
     	}
     	else {

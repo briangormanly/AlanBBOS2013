@@ -124,6 +124,7 @@ function hostDivPCB() {
 	document.getElementById('taPCBstatus').innerHTML = "";
 	
 	// get a local copy of the processes array so we can sort
+	thisProcesses = null;
 	thisProcesses = _Processes;
 
 	//sort call

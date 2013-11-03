@@ -14,6 +14,7 @@
    ------------ */
 
 function Cpu() {
+	this.pid
     this.pc = 0;     // Program Counter
     this.acc = 0;     // Accumulator
     this.state = 0; // current process state
@@ -32,6 +33,7 @@ function Cpu() {
     this.opCode = "";
     
     this.init = function() {
+    	this.pid
         this.pc = 0;
         this.acc = 0;
         this.x = 0;
@@ -47,7 +49,7 @@ function Cpu() {
         // check with the scheduler for a process to run
         _Scheduler.processToRun();
         
-        if(this.currentProcess != null) {
+        if(this.currentProcess != null && this.currentProcess.state != P_TERMINATED) {
 	        this.currentProcess.state = P_RUNNING;
 	        
 	        // log the process running
@@ -57,6 +59,7 @@ function Cpu() {
 	        if(this.currentProcess != -1) {
 	        	// have a process to work on 
 	        	// load the registers from the PCB
+	        	this.pid = this.currentProcess.pid;
 	        	this.pc = this.currentProcess.pc;
 	        	this.acc = this.currentProcess.acc;
 	        	this.state = this.currentProcess.state;
@@ -81,6 +84,7 @@ function Cpu() {
 	        	this.pc++;
 	        	
 	        	//save the registers states back to the pcb
+	        	this.currentProcess.pid = this.pid;
 	        	this.currentProcess.pc = this.pc;
 	        	this.currentProcess.acc = this.acc;
 	        	this.currentProcess.state = this.state;
@@ -89,21 +93,25 @@ function Cpu() {
 	        	this.currentProcess.z = this.z;
 	        	this.currentProcess.block = this.block;
 	        	
-	        	krnTrace("pc:" + this.currentProcess.pc + " acc:" + this.currentProcess.acc + " x:" + this.currentProcess.x + " y:" + this.currentProcess.y + " z:" + this.currentProcess.z);
+	        	
+	        	
+	        	krnTrace("pc:" + this.currentProcess.pc + " acc:" + this.currentProcess.acc + " state:" + this.currentProcess.state + " x:" + this.currentProcess.x + " y:" + this.currentProcess.y + " z:" + this.currentProcess.z);
 	        	
 	        	// set back to ready
 	        	if(this.currentProcess.state != P_TERMINATED) {
 	        		this.currentProcess.state = P_READY;
 	        	}
 	        	
-	        	
+
 	        	// send the scheduler back the state of the registers
 	        	_Scheduler.updateProcess(this.currentProcess);
+	        	
+	        	
 	        }
 	        else {
 	        	// no valid process, stop until another is loaded
 	        	// this.isExecuting = false; 
-	        	
+	        	//alert("hello!");
 	        }
         
         }
@@ -270,7 +278,8 @@ function Cpu() {
     
     function loadAccFromMem() {
 		// get the contents of the memory location and put in the accumulator
-		this.acc = _Memory[this.getTwoBytesDec()];
+		var location = this.getTwoBytesDec();
+    	this.acc = _MemoryManager.getByte(this, location);
 		//alert(this.acc + " is the value in the accumulator");
 
     }
@@ -278,8 +287,8 @@ function Cpu() {
     
     function storeAccInMem() {
 		//_Memory[this.getTwoBytesDec()] = this.acc;
+    	//alert(this.pid);
     	_MemoryManager.writeByte(this, this.getTwoBytesDec(), this.acc);
-
     }
     
     
@@ -290,7 +299,8 @@ function Cpu() {
     }
     
     function loadXRegFromMem() {
-    	this.x = _Memory[this.getTwoBytesDec()];
+    	var location = this.getTwoBytesDec();
+    	this.x = _MemoryManager.getByte(this, location);
     }
     
     function loadYRegWithConst() {
@@ -298,7 +308,8 @@ function Cpu() {
     }
     
     function loadYRegFromMem() {
-    	this.y = _Memory[this.getTwoBytesDec()];
+    	var location = this.getTwoBytesDec();
+    	this.y = _MemoryManager.getByte(this, location);
     }
     
     function noOperation() {
@@ -355,14 +366,13 @@ function Cpu() {
     }
     
     function incByteValue() {
-    	// get the address of the value to increment
-    	var address = this.getTwoBytesDec();
     	
     	// get the base 10 value at the memory address
-    	var value = _MemoryManager.convertHexToDec(_Memory[address]);
+    	var location = this.getTwoBytesDec();
+    	var value = _MemoryManager.convertHexToDec(_MemoryManager.getByte(this, location));
 
     	// convert the increamented value back to base 16
-    	_Memory[address] = covertBase10ToBase16(this.decTo2sComp(value + 1));
+    	_MemoryManager.writeByte(this, location, covertBase10ToBase16(this.decTo2sComp(value + 1)));
     }
     
     function sysCall() {
@@ -376,18 +386,21 @@ function Cpu() {
     	}
     	else if(this.x === 2) {
     		// get the starting address from the y register
-    		var outAddress = this.y;
+    		var location = this.y;
+    		var value = _MemoryManager.getByte(this, location);
     		
-    		// loop through memory and output until terminator 00 is reached
-    		while(_Memory[outAddress] != 00) {
+    		while(value != 00) {
     			// Turn byte into a decimal integer
-    			keyCode = parseInt(_Memory[outAddress], 16);
+    			keyCode = parseInt(value, 16);
     			chr = String.fromCharCode(keyCode);
 
     			// output to console
     			_StdIn.displayText(chr);
     			// Increment the address
-    			outAddress++;
+    			location++;
+    			
+    			// get the next value
+    			var value = _MemoryManager.getByte(this, location);
     		}
     		
     	}
@@ -399,7 +412,9 @@ function Cpu() {
     
     function addWithCarry() {
     	// Add contents of the memory location and the contents of the ACC
-    	var value = _Memory[this.getTwoBytesDec()];
+    	var location = this.getTwoBytesDec();
+    	var value = _MemoryManager.getByte(this, location);
+    	
     	//alert("add with carry : " + value + "to acc: " + this.acc);
 		this.acc = parseInt(this.acc) + parseInt(value, 16);
 		//alert("acc rusult: "+ this.acc);
