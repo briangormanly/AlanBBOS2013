@@ -53,7 +53,7 @@ function Cpu() {
 	        this.currentProcess.state = P_RUNNING;
 	        
 	        // log the process running
-	        //alert("process running : " + this.currentProcess.pid);
+	        //alert("process running : " + this.currentProcess.pid);	
 	
 	        // check to see if there is a valid process
 	        if(this.currentProcess != -1) {
@@ -93,10 +93,6 @@ function Cpu() {
 	        	this.currentProcess.z = this.z;
 	        	this.currentProcess.block = this.block;
 	        	
-	        	
-	        	
-	        	krnTrace("pc:" + this.currentProcess.pc + " acc:" + this.currentProcess.acc + " state:" + this.currentProcess.state + " x:" + this.currentProcess.x + " y:" + this.currentProcess.y + " z:" + this.currentProcess.z);
-	        	
 	        	// set back to ready
 	        	if(this.currentProcess.state != P_TERMINATED) {
 	        		this.currentProcess.state = P_READY;
@@ -113,7 +109,7 @@ function Cpu() {
 	        	// this.isExecuting = false; 
 	        	//alert("hello!");
 	        }
-        
+	        
         }
         
         // update the UI with the CPU register statuses
@@ -122,7 +118,9 @@ function Cpu() {
     	// update the memory veiw
     	hostDivMemory();
     	
-        
+    	// log the cycle
+	    krnTrace("pid:" + this.pid + "pc:" + this.pc + " acc:" + this.acc + " state:" + this.state + " x:" + this.x + " y:" + this.y + " z:" + this.z);
+	        
     };
     
     // fetch the instruction from memory

@@ -65,6 +65,12 @@ function Scheduler() {
 			}
 		}
 		
+		// check to see if we just had a context switch
+		if(quantaCount === 0) {
+			krnTrace("Context switch!");
+		}
+		
+		
 		// react to the flag
 		if(flag === 0) {
 			// no processes to run
