@@ -55,61 +55,63 @@ function Cpu() {
         }
         */
         
+        if(this.currentProcess != null) {
+	        this.currentProcess.state = P_RUNNING;
+	        
+	        // log the process running
+	        //alert("process running : " + this.currentProcess.pid);
+	
+	        // check to see if there is a valid process
+	        if(this.currentProcess != -1) {
+	        	// have a process to work on 
+	        	// load the registers from the PCB
+	        	this.pc = this.currentProcess.pc;
+	        	this.acc = this.currentProcess.acc;
+	        	this.state = this.currentProcess.state;
+	        	this.x = this.currentProcess.x;
+	        	this.y = this.currentProcess.y;
+	        	this.z = this.currentProcess.z;
+	        	this.block = this.currentProcess.block;
+	        	
+	        	// fetch
+	        	this.fetch();
+	
+	        	// decode
+	        	this.decode();
+	        	
+	        	// execute
+	        	this.execute();
+	        	
+	        	// update the PCB view
+	        	hostDivPCB();
+	        	
+	        	// increment the pc
+	        	this.pc++;
+	        	
+	        	//save the registers states back to the pcb
+	        	this.currentProcess.pc = this.pc;
+	        	this.currentProcess.acc = this.acc;
+	        	this.currentProcess.state = this.state;
+	        	this.currentProcess.x = this.x;
+	        	this.currentProcess.y = this.y;
+	        	this.currentProcess.z = this.z;
+	        	this.currentProcess.block = this.block;
+	        	
+	        	// set back to ready
+	        	if(this.currentProcess.state != P_TERMINATED) {
+	        		this.currentProcess.state = P_READY;
+	        	}
+	        	
+	        	
+	        	// send the scheduler back the state of the registers
+	        	_Scheduler.updateProcess(this.currentProcess);
+	        }
+	        else {
+	        	// no valid process, stop until another is loaded
+	        	// this.isExecuting = false; 
+	        	
+	        }
         
-        this.currentProcess.state = P_RUNNING;
-        
-        // log the process running
-        //alert("process running : " + this.currentProcess.pid);
-
-        // check to see if there is a valid process
-        if(this.currentProcess != -1) {
-        	// have a process to work on 
-        	// load the registers from the PCB
-        	this.pc = this.currentProcess.pc;
-        	this.acc = this.currentProcess.acc;
-        	this.state = this.currentProcess.state;
-        	this.x = this.currentProcess.x;
-        	this.y = this.currentProcess.y;
-        	this.z = this.currentProcess.z;
-        	this.block = this.currentProcess.block;
-        	
-        	// fetch
-        	this.fetch();
-
-        	// decode
-        	this.decode();
-        	
-        	// execute
-        	this.execute();
-        	
-        	// update the PCB view
-        	hostDivPCB();
-        	
-        	// increment the pc
-        	this.pc++;
-        	
-        	//save the registers states back to the pcb
-        	this.currentProcess.pc = this.pc;
-        	this.currentProcess.acc = this.acc;
-        	this.currentProcess.state = this.state;
-        	this.currentProcess.x = this.x;
-        	this.currentProcess.y = this.y;
-        	this.currentProcess.z = this.z;
-        	this.currentProcess.block = this.block;
-        	
-        	// set back to ready
-        	if(this.currentProcess.state != P_TERMINATED) {
-        		this.currentProcess.state = P_READY;
-        	}
-        	
-        	
-        	// send the scheduler back the state of the registers
-        	_Scheduler.updateProcess(this.currentProcess);
-        }
-        else {
-        	// no valid process, stop until another is loaded
-        	// this.isExecuting = false; 
-        	
         }
         
         // update the UI with the CPU register statuses
@@ -117,6 +119,7 @@ function Cpu() {
     
     	// update the memory veiw
     	hostDivMemory();
+    	
         
     };
     
