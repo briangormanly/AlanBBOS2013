@@ -18,7 +18,7 @@ function MemoryManager() {
     	this.NUM_MEMORY_SLOTS = TOTAL_MEMORY / MAX_PROGRAM_SIZE;
     	
     	// initialize the memory blocks to being empty
-    	for(i=0; i < this.NUM_MEMORY_SLOTS; i++) {
+    	for(var i=0; i < this.NUM_MEMORY_SLOTS; i++) {
     		this.blockStatus[i] = null;
     	}
     };
@@ -29,7 +29,7 @@ function MemoryManager() {
     	var openBlock = -1;
     	// check for the next free block of memory 
     	// find the first available memory block 
-    	for(i=0; i < this.NUM_MEMORY_SLOTS; i++) {
+    	for(var i=0; i < this.NUM_MEMORY_SLOTS; i++) {
     		if(this.blockStatus[i] == null) {
     			openBlock = i;
     			// we found an open block break the loop
@@ -49,7 +49,7 @@ function MemoryManager() {
     	}
     	else {
     		// no open memory available!
-    		return -1
+    		return -1;
     	}
     	
     	

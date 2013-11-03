@@ -149,4 +149,20 @@ function swap(items, firstIndex, secondIndex){
     items[secondIndex] = temp;
 }
 
+function covertBase10ToBase16(decimalNumber) {
+	var hex = decimalNumber.toString(16);
+	
+	// check to see if we need to padd
+	if(hex.length == 1) {
+		hex = "0" + hex;
+	}
+	
+	// make sure it is uppercase
+	hex = hex.toUpperCase();
+	
+	// return the value
+	return hex;
+}
+
+
 

@@ -62,11 +62,18 @@ function hostLog(msg, source)
     var now = new Date().getTime();
 
     // Build the log string.   
-    var str = "({ clock:" + clock + ", source:" + source + ", msg:" + msg + ", now:" + now  + " })"  + "\n";    
-
+    //var str = "({ clock:" + clock + ", source:" + source + ", msg:" + msg + ", now:" + now  + " })"  + "\n";    
+    var str = msg + "\n"; 
+    
     // Update the log console.
     var taLog = document.getElementById("taLog");
+    
+    // backwards log
     taLog.value = str + taLog.value;
+    
+    //fowards log
+    //taLog.value = taLog.value + str;
+    
     // Optionally update a log database or some streaming service.
 }
 

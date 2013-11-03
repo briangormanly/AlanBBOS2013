@@ -42,18 +42,10 @@ function Cpu() {
     };
     
     this.cycle = function() {
-        krnTrace("CPU cycle");
         // TODO: Accumulate CPU usage and profiling statistics here.
-        
         
         // check with the scheduler for a process to run
         _Scheduler.processToRun();
-        /*
-        if(this.currentProcess == null) {
-        	this.isExecuting = false;
-        	return;
-        }
-        */
         
         if(this.currentProcess != null) {
 	        this.currentProcess.state = P_RUNNING;
@@ -96,6 +88,8 @@ function Cpu() {
 	        	this.currentProcess.y = this.y;
 	        	this.currentProcess.z = this.z;
 	        	this.currentProcess.block = this.block;
+	        	
+	        	krnTrace("pc:" + this.currentProcess.pc + " acc:" + this.currentProcess.acc + " x:" + this.currentProcess.x + " y:" + this.currentProcess.y + " z:" + this.currentProcess.z);
 	        	
 	        	// set back to ready
 	        	if(this.currentProcess.state != P_TERMINATED) {
@@ -246,7 +240,27 @@ function Cpu() {
 	 * Convert a decimal value passed in to 2's complement binary.
 	 */
     this.decTo2sComp = function(dec) {
-    	
+    	if (dec < 0)
+    	{
+    		// Invert the bits and convert to binary.
+    		var decStr = (~dec).toString(2);
+    		
+    		// Extend to 8 bits
+    		for (var i = decStr.length; i < 8; i++)
+    			decStr = "0" + decStr;
+    		
+    		// Invert the bits
+    		var convertedStr = "";
+    		
+    		for (var j = 0; j < decStr.length; j++)
+    			convertedStr += Cpu.inversionMap[decStr[j]];
+    		
+    		return parseInt(convertedStr, 2);
+    	}
+    	else
+    	{
+    		return dec;
+    	}
     }
     
     
@@ -338,8 +352,11 @@ function Cpu() {
     	// get the address of the value to increment
     	var address = this.getTwoBytesDec();
     	
+    	// get the base 10 value at the memory address
     	var value = _MemoryManager.convertHexToDec(_Memory[address]);
-    	_Memory[address] = this.decTo2sComp(value + 1);
+
+    	// convert the increamented value back to base 16
+    	_Memory[address] = covertBase10ToBase16(this.decTo2sComp(value + 1));
     }
     
     function sysCall() {
