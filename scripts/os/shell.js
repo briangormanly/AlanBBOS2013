@@ -91,6 +91,42 @@ function shellInit() {
     });
     this.commandList[this.commandList.length] = sc;
     
+    // display processes
+    sc = new ShellCommand();
+    sc.command = "top";
+    sc.description = "- shows information on all processes active";
+    sc.function = (function(args){
+    	_StdIn.displayTextOnNewLine("Processes:");
+    	
+    	// interate through processes
+    	for(var i=0; i < _Processes.length; i++) {
+    		if(_Processes[i].state === P_READY || _Processes[i].state === P_LOADED || _Processes[i].state === P_NEW || _Processes[i].state === P_RUNNING) {
+    			_StdIn.displayTextOnNewLine("PID:" + _Processes[i].pid + " name:" + _Processes[i].name + " state:" + _Processes[i].state);
+    		}
+    	}
+    	
+        
+    });
+    this.commandList[this.commandList.length] = sc;
+    
+    // kill processes
+    sc = new ShellCommand();
+    sc.command = "kill";
+    sc.description = "- kill the process identified by the PID";
+    sc.function = (function(args){
+    	// check that the user provided a valid argument
+    	if (args.length > 0 && args[0] >= 0 && (_Processes[args[0]].state === P_RUNNING || _Processes[args[0]].state === P_READY)) {
+    		// try to terminate the process
+    		_Processes[args[0]].state = P_TERMINATED;
+    	}
+    	else {
+    		// tell user to enter a valid pid
+    		_StdIn.displayTextOnNewLine("Please provide a valid pid");
+    	}
+        
+    });
+    this.commandList[this.commandList.length] = sc;
+    
     // set scheduler
     sc = new ShellCommand();
     sc.command = "scheduler";
