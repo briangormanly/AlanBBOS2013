@@ -119,7 +119,7 @@ function Cpu() {
     	hostDivMemory();
     	
     	// log the cycle
-	    krnTrace("pid:" + this.pid + "pc:" + this.pc + " acc:" + this.acc + " state:" + this.state + " x:" + this.x + " y:" + this.y + " z:" + this.z);
+	    krnTrace("pid:" + this.pid + " instruct:" + this.currentInstruction + " pc:" + this.pc + " acc:" + this.acc + " state:" + this.state + " x:" + this.x + " y:" + this.y + " z:" + this.z);
 	        
     };
     
@@ -323,8 +323,8 @@ function Cpu() {
 
     	// read the memory address
     	var addval = _MemoryManager.getByte(this, address);
-
-    	if(this.x === addval) {
+    	
+    	if(this.x == addval) {
     		//alert("x is : " + this.x + " and value is " + addval + " z is now 1");
     		// if make the z flag one
     		this.z = 1;
@@ -338,7 +338,7 @@ function Cpu() {
     
     function branchXBytes() {
     	// check to see if the z flag is eq to x
-    	if(this.z === 0) {
+    	if(this.z == 0) {
     		// get the value to increment the pc
     		var valToAdd = this.getNextByteDec();
     		
