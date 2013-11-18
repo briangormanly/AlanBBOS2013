@@ -40,7 +40,7 @@
 
 <div id="divMain" style="width:100%;">
 
-   <div id="divButtonBar" style="margin:4px;">
+   <div id="divButtonBar" style="position: absolute; top:5px; left:5px;">
       <input type="button"
              id = "btnStartOS"
              name="brnStartOS"
@@ -68,62 +68,104 @@
              onclick="hostBtnReset_click(this);">
    </div>
 
-   <div id="divConsole" style="margin:4px; width:500px; height:700px; float:left;">
+   <div id="divConsole" style="position: absolute; top:35px; left:5px; width:500px;">
       <canvas id="display"
               width="500px"
               height="650px"
               tabindex="3">
       </canvas>
    </div>
+   
+	<div id="controlBar1" style="position: absolute; top:35px; left:520px; width:50px; height:350px; background-color:silver;">
+		<input type="button"
+             id = "btnLog"
+             name="brnLog"
+             class="bar_button"
+             value="Log"
+             tabindex="2"
+             onclick="hostBtnReset_click(this);">
+    	<input type="button"
+             id = "btnMemory"
+             name="brnMemory"
+             class="bar_button"
+             value="Mem"
+             tabindex="2"
+             onclick="hostBtnReset_click(this);">
+    	<input type="button"
+             id = "btnDisk"
+             name="brnDisk"
+             class="bar_button"
+             value="Disk"
+             tabindex="2"
+             onclick="hostBtnReset_click(this);">
+	</div>
+	
+	<div id="divider1" style="position: absolute; top:378px; left:520px; width:575px; height:5px;">
+		<hr />
+	</div>
+	
+	<div id="controlBar2" style="position: absolute; top:390px; left:520px; width:50px; height:160px; background-color:silver;">
+		<input type="button"
+             id = "btnCPU"
+             name="brnCPU"
+             class="bar_button"
+             value="CPU"
+             tabindex="2"
+             onclick="hostBtnReset_click(this);">
+    	<input type="button"
+             id = "btnProcesses"
+             name="brnProcesses"
+             class="bar_button"
+             value="Proc"
+             tabindex="2"
+             onclick="hostBtnReset_click(this);">
+	</div>
+	
+	<div id="divider2" style="position: absolute; top:545px; left:520px; width:575px; height:5px;">
+		<hr />
+	</div>
 
-   <div id="divLog" style="margin-left:520px;">
-      <label>
-         Log
-         <br>
-         <textarea name="taLog"
-                   id  ="taLog"
-                   rows="26"
-                   cols="48"
-         ></textarea>
-      </label>
-   </div>
-
-   <div id="divUserProgramInput" style="margin-left:520px;">
-      <label>
-         User Program Input
-         <br>
-         <textarea name="taProgramInput"
-                   id  ="taProgramInput"
-                   rows="8"
-                   cols="48"
-         ></textarea>
-      </label>
+   <div id="divLog" style="position: absolute; top:35px; left:580px;">
+	   <textarea name="taLog"
+	             id  ="taLog"
+	             rows="26"
+	             cols="68">
+	   </textarea>
    </div>
    
-   <div id="divMemory" style="position: absolute; top:40px; left:900px;">
-      <label>
-         Memory
-         <br>
-         <div name="taMemory" id="taMemory" style="height:330px; width:250px; overflow-y: scroll; background-color:white; font-family:monospace;"></div>
-      </label>
+   <div id="divMemory" style="position: absolute; display:none; top:35px; left:580px;">
+   		<div name="taMemory" id="taMemory" style="height:340px; width:250px; overflow-y: scroll; background-color:white; font-family:monospace;"></div>
    </div>
    
-   <div id="divCPUstatus" style="position: absolute; top:395px; left:900px;">
-      <label>
-         CPU
-         <br>
-         <div name="taCPUstatus" id="taCPUstatus" style="height:120px; width:250px; overflow-y: scroll; background-color:white; font-family:monospace;"></div>
-      </label>
+   <div id="divDisk" style="position: absolute; display:none; top:35px; left:580px;">
+   		<div name="taDisk" id="taDisk" style="height:340px; width:250px; overflow-y: scroll; background-color:white; font-family:monospace;"></div>
    </div>
    
-    <div id="divPCBstatus" style="position: absolute; top:540px; left:530px;">
-      <label>
-         Processes / PCB info<br />
+   
+   
+   <div id="divPCBstatus" style="position: absolute; display:none; top:400px; left:580px;">
+      <label style="color:white;">
          PID&nbsp;&nbsp;|&nbsp;Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
          | State&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;PC&nbsp;&nbsp;
          |&nbsp;&nbsp;ACC&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;X&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Y&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Z&nbsp;&nbsp;&nbsp;	
          <br>
          <div name="taPCBstatus" id="taPCBstatus" style="height:115px; width:500px; overflow-y: scroll; background-color:white; font-family:monospace;"></div>
+      </label>
+   </div>
+   
+   <div id="divCPUstatus" style="position: absolute; top:400px; left:580px;">
+         <div name="taCPUstatus" id="taCPUstatus" style="height:140px; width:500px; overflow-y: scroll; background-color:white; font-family:monospace;"></div>
+   </div>
+   
+   <div id="divUserProgramInput" style="position: absolute; top:560px; left:525px;">
+      <label style="color:white;">
+         User Program Input
+         <br>
+         <textarea name="taProgramInput"
+                   id  ="taProgramInput"
+                   rows="8"
+                   cols="76"
+         ></textarea>
       </label>
    </div>
    
@@ -143,7 +185,7 @@
 
 </div>
 
-<p class="footerText" style="clear:both;">
+<p class="footerText" style="width:100%; position: absolute; top:703px; left:0px; background-color:white; margin-top:15px; text-align:center;">
    <br>
    Copyright &copy; 2008 - 2013 No Rights Reserved.
    <br>

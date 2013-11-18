@@ -1,7 +1,7 @@
 /* alanbbos.css */
 
 body {
-   background: #909193 url(images/linen.png) repeat;
+   background: #909193 url(images/new_back.jpg) repeat;
    font-family: Helvetica, Verdana, Arial, sans-serif;
 	font-size: 12pt;
 	font-weight: normal;
@@ -40,9 +40,21 @@ h3 {
 	width: 100px;
 }
 
+.bar_button {
+	color:white;
+	font-size:.9em;
+	height:40px;
+	width: 48px;
+	background-color: #435465;
+	margin: 1px;
+	padding: 5px;
+}
 .footerText {
    color: black;
    font-family: Arial, Helvetica, sans-serif;
 	font-size: 8pt;
    text-align: center;
 }
+
+hr { display: block; height: 2px; color: #435465;
+    border: 0; border-top: 1px solid #ccc; }
