@@ -83,21 +83,21 @@
              class="bar_button"
              value="Log"
              tabindex="2"
-             onclick="hostBtnReset_click(this);">
+             onclick="hostLogButton();">
     	<input type="button"
              id = "btnMemory"
              name="brnMemory"
              class="bar_button"
              value="Mem"
              tabindex="2"
-             onclick="hostBtnReset_click(this);">
+             onclick="hostMemoryButton();">
     	<input type="button"
              id = "btnDisk"
              name="brnDisk"
              class="bar_button"
              value="Disk"
              tabindex="2"
-             onclick="hostBtnReset_click(this);">
+             onclick="hostDiskButton();">
 	</div>
 	
 	<div id="divider1" style="position: absolute; top:378px; left:520px; width:575px; height:5px;">
@@ -111,14 +111,14 @@
              class="bar_button"
              value="CPU"
              tabindex="2"
-             onclick="hostBtnReset_click(this);">
+             onclick="hostCPUButton();">
     	<input type="button"
              id = "btnProcesses"
              name="brnProcesses"
              class="bar_button"
              value="Proc"
              tabindex="2"
-             onclick="hostBtnReset_click(this);">
+             onclick="hostProcButton();">
 	</div>
 	
 	<div id="divider2" style="position: absolute; top:545px; left:520px; width:575px; height:5px;">
@@ -134,11 +134,11 @@
    </div>
    
    <div id="divMemory" style="position: absolute; display:none; top:35px; left:580px;">
-   		<div name="taMemory" id="taMemory" style="height:340px; width:250px; overflow-y: scroll; background-color:white; font-family:monospace;"></div>
+   		<div name="taMemory" id="taMemory" style="height:340px; width:500px; overflow-y: scroll; background-color:white; font-family:monospace;"></div>
    </div>
    
    <div id="divDisk" style="position: absolute; display:none; top:35px; left:580px;">
-   		<div name="taDisk" id="taDisk" style="height:340px; width:250px; overflow-y: scroll; background-color:white; font-family:monospace;"></div>
+   		<div name="taDisk" id="taDisk" style="height:340px; width:500px; overflow-y: scroll; background-color:white; font-family:monospace;"></div>
    </div>
    
    
@@ -149,7 +149,7 @@
          | State&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;PC&nbsp;&nbsp;
          |&nbsp;&nbsp;ACC&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;X&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Y&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Z&nbsp;&nbsp;&nbsp;	
          <br>
-         <div name="taPCBstatus" id="taPCBstatus" style="height:115px; width:500px; overflow-y: scroll; background-color:white; font-family:monospace;"></div>
+         <div name="taPCBstatus" id="taPCBstatus" style="height:115px; width:500px; overflow-y: scroll; background-color:gray; font-family:monospace;"></div>
       </label>
    </div>
    

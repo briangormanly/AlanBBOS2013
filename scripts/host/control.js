@@ -204,3 +204,32 @@ function hostBtnReset_click(btn)
     // be reloaded from the server. If it is false or not specified, the browser may reload the 
     // page from its cache, which is not what we want.
 }
+
+function hostLogButton() {
+	document.getElementById('divLog').style.display = 'block';
+	document.getElementById('divMemory').style.display = 'none';
+	document.getElementById('divDisk').style.display = 'none';
+}
+
+function hostMemoryButton() {
+	document.getElementById('divLog').style.display = 'none';
+	document.getElementById('divMemory').style.display = 'block';
+	document.getElementById('divDisk').style.display = 'none';
+}
+
+function hostDiskButton() {
+	document.getElementById('divLog').style.display = 'none';
+	document.getElementById('divMemory').style.display = 'none';
+	document.getElementById('divDisk').style.display = 'block';
+}
+
+function hostCPUButton() {
+	document.getElementById('divCPUstatus').style.display = 'block';
+	document.getElementById('divPCBstatus').style.display = 'none';
+}
+
+function hostProcButton() {
+	document.getElementById('divCPUstatus').style.display = 'none';
+	document.getElementById('divPCBstatus').style.display = 'block';
+}
+
