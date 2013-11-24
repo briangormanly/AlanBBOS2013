@@ -176,7 +176,7 @@ function hostDivDisk() {
 					// create the tsb string for the key
 					var tsbString = i.toString() + j.toString() + k.toString();
 					// insert a divider at position 4
-					var modBlock = localStorage[tsbString].substring(0,4) + "|" + localStorage[tsbString].substring(4, BLOCK_SIZE);
+					var modBlock = (localStorage[tsbString] + '').substring(0,4) + "|" + (localStorage[tsbString] + '').substring(4, BLOCK_SIZE);
 					// output the block
 					document.getElementById('taDisk').innerHTML += tsbString + "|" + modBlock + "<br/>";
 					
