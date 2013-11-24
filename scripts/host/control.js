@@ -173,9 +173,11 @@ function hostDivDisk() {
 		for(var i=0; i<TRACKS; i++) {
 			for(var j=0; j<SECTORS; j++) {
 				for(var k=0; k<BLOCKS; k++) {
+					// create the tsb string for the key
+					var tsbString = i.toString() + j.toString() + k.toString();
+					
 					if(localStorage[tsbString] != null) {
-						// create the tsb string for the key
-						var tsbString = i.toString() + j.toString() + k.toString();
+						
 						// insert a divider at position 4
 						var modBlock = (localStorage[tsbString] + '').substring(0,4) + "|" + (localStorage[tsbString] + '').substring(4, BLOCK_SIZE);
 						// output the block
@@ -183,7 +185,7 @@ function hostDivDisk() {
 					}
 					else {
 						document.getElementById('taDisk').innerHTML += "?<br/>";
-					}
+					}	
 					
 				}
 			}
