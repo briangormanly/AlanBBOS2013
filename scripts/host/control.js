@@ -35,6 +35,9 @@ function hostInit()
 	
 	// initialize the memory display
 	hostDivMemory();
+	
+	// initialize the disk display
+	hostDivDisk();
 
 	// Set focus on the start button.
    document.getElementById("btnStartOS").focus();
@@ -118,6 +121,72 @@ function hostDivMemory() {
 	}
 }
 
+
+// controls the output of the disk array to the disk div
+function hostDivDisk() {
+	// clear the disk window
+	document.getElementById('taDisk').innerHTML = "";
+	
+	// add the TSB header
+	document.getElementById('taDisk').innerHTML += "TSB|"
+	
+	// create the legend at the top
+	// print only the first character on the first line
+	for(var l=0; l<BLOCK_SIZE; l++) {
+		// check for 4th to add divider
+		if(l===4) {
+			document.getElementById('taDisk').innerHTML += "|"
+		}
+		document.getElementById('taDisk').innerHTML += (l + '').substring(0, 1);
+	}
+	
+	// add a line break
+	document.getElementById('taDisk').innerHTML += "<br />";
+	
+	// add the TSB header
+	document.getElementById('taDisk').innerHTML += "...|";
+	
+	// then print the second
+	for(var n=0; n<BLOCK_SIZE; n++) {
+		if(n > 9) {
+			
+			
+			document.getElementById('taDisk').innerHTML += (n + '').substring(1, 2);
+		}
+		else {
+			if(n===4) {
+				document.getElementById('taDisk').innerHTML += "|"
+			}
+			document.getElementById('taDisk').innerHTML +="."; 
+		}
+		
+
+		
+	}
+	
+	
+	// add a line break
+	document.getElementById('taDisk').innerHTML += "<br /><br />";
+	
+	// show the output of local storage in the div
+	if(localStorage != null) {
+		for(var i=0; i<TRACKS; i++) {
+			for(var j=0; j<SECTORS; j++) {
+				for(var k=0; k<BLOCKS; k++) {
+					// create the tsb string for the key
+					var tsbString = i.toString() + j.toString() + k.toString();
+					// insert a divider at position 4
+					var modBlock = localStorage[tsbString].substring(0,4) + "|" + localStorage[tsbString].substring(4, BLOCK_SIZE);
+					// output the block
+					document.getElementById('taDisk').innerHTML += tsbString + "|" + modBlock + "<br/>";
+					
+				}
+			}
+		}
+	}
+}
+
+
 //controls the output of the CPU info
 function hostDivPCB() {
 	// clear the pcb window
@@ -178,6 +247,10 @@ function hostBtnStartOS_click(btn)
     // create and start the CPU Scheduler
     _Scheduler = new Scheduler();
 	_Scheduler.init();
+	
+	// create a Hard disk and initialize
+	_Disk = new Disk();
+	_Disk.init();
 
     // ... then set the host clock pulse ...
     _hardwareClockID = setInterval(hostClockPulse, CPU_CLOCK_INTERVAL);

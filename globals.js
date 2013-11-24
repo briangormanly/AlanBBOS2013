@@ -51,6 +51,8 @@ var _CPU = null;
 
 var _Memory = null;
 
+var _Disk = null;
+
 var _Scheduler = null;
 
 var _MemoryManager = null;
@@ -61,6 +63,19 @@ var _Mode = 0;   // 0 = Kernel Mode, 1 = User Mode.  See page 21.
 
 // pid coutner
 var lastPID = 0;
+
+
+// Disk globlas
+
+// # tracks
+var TRACKS = 4;
+// # sectors
+var SECTORS = 8;
+// # blocks
+var BLOCKS = 8;
+// size of individual blocks
+var BLOCK_SIZE = 64;
+
 
 
 

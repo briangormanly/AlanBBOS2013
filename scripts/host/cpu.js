@@ -118,6 +118,9 @@ function Cpu() {
     	// update the memory veiw
     	hostDivMemory();
     	
+    	// update the disk
+    	hostDivDisk();
+    	
     	// log the cycle
 	    krnTrace("pid:" + this.pid + " instruct:" + this.currentInstruction + " pc:" + this.pc + " acc:" + this.acc + " state:" + this.state + " x:" + this.x + " y:" + this.y + " z:" + this.z);
 	        
