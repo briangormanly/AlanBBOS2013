@@ -69,20 +69,66 @@ function Disk() {
     	
     }
     
-    // create a file on the file system
-    this.create = function() {
+    /**
+     * Create a file on the disk.
+     */
+    this.create = function(name, mode) {
     	// create a sector counter
     	var sectorCounter = 0;
     	
-    	// create a found flag for the dirtory entry
+    	// create a track counter
+    	var trackCounter = 0;
+    	
+    	// create a black counter 
+    	var blockCounter = 0;
+    	
+    	// create a found flag for the directory entry
     	var flag = false;
     	
     	// check that we stay within the directory and that a location has 
     	// not yet been found
     	while(sectorCounter < DIRECTORY_TRACKS && !flag) {
+    		// create the tsb
+    		var tsbString = sectorCounter.toString() + trackCounter.toString() + blockCounter.toString();
+    		
+    		// get the block
+    		var block = localStorage.getItem(tsbString);
+    		
+    		if(block[0] === "0") {
+    			// open block found
+    			
+    			// find location on disk out side the directory to write file
+
+    			// create a sector counter
+		    	var sectorMainCounter = DIRECTORY_TRACKS;
+		    	
+		    	// create a track counter
+		    	var trackMainCounter = 0;
+		    	
+		    	// create a black counter 
+		    	var blockMainCounter = 0;
+		    	
+		    	// create a found flag for the main data entry
+		    	var mainFlag = false;
+		    	
+		    	// check for the first open block
+		    	while(sectorCounter < TRACKS && !mainFlag) {
+		    		
+		    	}
+		    	
+
+    			
+    			// create directory entry
+    			
+    			// set flag to break
+    			flag = true;
+    		}
+    		
     		
     	}
     	
+    	
+
     	
 
 
@@ -98,7 +144,7 @@ function Disk() {
 					var tsbString = i.toString() + j.toString() + k.toString();
 						
 					// check to see if this block is in use 
-					if(localStorage.getItem(tsbString) == "0") {
+					if() {
 						// found empty block, create directory record
 						
 						// set the found flag
