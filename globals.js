@@ -69,6 +69,8 @@ var lastPID = 0;
 
 // # tracks
 var TRACKS = 4;
+// Directory tracks - number of tracks set aside for the directory
+var DIRECTORY_TRACKS = 1;
 // # sectors
 var SECTORS = 8;
 // # blocks

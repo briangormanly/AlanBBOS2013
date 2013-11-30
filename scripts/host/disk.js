@@ -58,14 +58,69 @@ function Disk() {
 			}
 			
 			// set the mbr
-			alert(localStorage["000"]);
+			localStorage.setItem("000", "1100Swap file location");
     	}
     	catch(e) {
     		
     	}
     	
+    	// update the display
+    	hostDivDisk();
+    	
     }
     
+    // create a file on the file system
+    this.create = function() {
+    	// create a sector counter
+    	var sectorCounter = 0;
+    	
+    	// create a found flag for the dirtory entry
+    	var flag = false;
+    	
+    	// check that we stay within the directory and that a location has 
+    	// not yet been found
+    	while(sectorCounter < DIRECTORY_TRACKS && !flag) {
+    		
+    	}
+    	
+    	
+
+
+    	
+    	
+    	
+    	// get first available space in the directory
+    	for(int i=0; i<DIRECTORY_TRACKS; i++) {
+    		for(var j=0; j<SECTORS; j++) {
+				for(var k=0; k<BLOCKS; k++) {
+					
+					// create a unique key out of the track sector and block
+					var tsbString = i.toString() + j.toString() + k.toString();
+						
+					// check to see if this block is in use 
+					if(localStorage.getItem(tsbString) == "0") {
+						// found empty block, create directory record
+						
+						// set the found flag
+						break;
+						
+					}
+				}
+			}
+    	}
+    	
+    	
+    }
+    
+    
+    this.write = function() {
+    
+    }
+    
+    this.overwrite = function() {
+    	
+    }
+
 }
 
 

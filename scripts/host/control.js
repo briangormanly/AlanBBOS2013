@@ -148,20 +148,30 @@ function hostDivDisk() {
 	
 	// then print the second
 	for(var n=0; n<BLOCK_SIZE; n++) {
-		if(n > 9) {
-			
-			
+		if(n > 9) {	
 			document.getElementById('taDisk').innerHTML += (n + '').substring(1, 2);
 		}
 		else {
-			if(n===4) {
-				document.getElementById('taDisk').innerHTML += "|"
+			if(n===0) {
+				document.getElementById('taDisk').innerHTML += "A"
 			}
-			document.getElementById('taDisk').innerHTML +="."; 
+			else if(n===1) {
+				document.getElementById('taDisk').innerHTML += "T"
+			}
+			else if(n===2) {
+				document.getElementById('taDisk').innerHTML += "S"
+			}
+			else if(n===3) {
+				document.getElementById('taDisk').innerHTML += "B"
+			}
+			else if(n===4) {
+				document.getElementById('taDisk').innerHTML += "|"
+				document.getElementById('taDisk').innerHTML +=".";
+			}
+			else {
+				document.getElementById('taDisk').innerHTML += "."
+			}
 		}
-		
-
-		
 	}
 	
 	
