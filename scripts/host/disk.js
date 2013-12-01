@@ -16,18 +16,11 @@ function Disk() {
 	this.init = function() {
     	// check to see if the browser supports html5 local storage
 		if(this.supports_html5_storage() != false) {
-			// check to see if we need to format the drive
-			
-			
-			
-			
 			
 		}
 		else {
 			alert('html localstorage is not supported!');
 		}
-		
-			
 		
     };
 
@@ -41,7 +34,20 @@ function Disk() {
     	}
     };
     
+    /**
+     * Write data to the disk
+     */
+    this.write = function(tsbString, block) {
+    	localStorage.setItem(tsbString, block);
+    }
     
+    /**
+     * Read data from disk
+     * @return block of data
+     */
+    this.read = function(tsbString) {
+    	return localStorage.getItem(tsbString);
+    }
     
     
 

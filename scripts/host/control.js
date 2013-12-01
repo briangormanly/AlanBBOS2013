@@ -264,10 +264,6 @@ function hostBtnStartOS_click(btn)
     // create and start the CPU Scheduler
     _Scheduler = new Scheduler();
 	_Scheduler.init();
-	
-	// create a Hard disk and initialize
-	_Disk = new Disk();
-	_Disk.init();
 
     // ... then set the host clock pulse ...
     _hardwareClockID = setInterval(hostClockPulse, CPU_CLOCK_INTERVAL);
