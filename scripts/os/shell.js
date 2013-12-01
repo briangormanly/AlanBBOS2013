@@ -115,7 +115,7 @@ function shellInit() {
     		// check the length of the filename 
     		if (args[0].length <= 57) {
     			// create the file
-        		krnFSDD.create(args[0], "7","111");
+        		krnFSDD.create(args[0], "7", "1");
     		}
     		else {
     			// tell the user the filename was too long

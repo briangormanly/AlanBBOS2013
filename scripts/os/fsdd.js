@@ -109,10 +109,10 @@ function FSDD() {
 	    			var active = ACTIVE;
 	    			
 	    			// set the size to initial 1
-	    			var size = "1";
+	    			var size = "001";
 	    			
 	    			// create the directory block
-	    			this.writeDirectoryBlock(tsbString, active, dataBlockTSB, mode, lock, size, name);
+	    			this.writeDirectoryBlock(dirBlockTSB, active, dataBlockTSB, mode, lock, size, name);
 	    			
 	    		}
 	    		else {
@@ -190,7 +190,7 @@ function FSDD() {
     			var lock = LOCK_INACTIVE;
     			
     			// set the size to initial 1
-    			var size = "1";
+    			var size = "001";
     			
     			// name is unknown at this point
     			var name = "unknown";
@@ -428,30 +428,26 @@ function FSDD() {
 	 */
 	this.writeDirectoryBlock = function(tsbString, active, dataBlockTSB, mode, lock, size, name) {
 		
+		//alert("recv: " + tsbString + " a:" + active + " dbtsb:" +  dataBlockTSB + " m:" +  mode + " l:" +  lock + " s:" +  size + " n:" +  name);
+		
 		// check the parameters
 		if(name.length < 1) {
-			krnTrace("Write Data block error: File name too short!");
+			krnTrace("Write Directory block error: File name too short! name length : " + name.length);
 		}
 		else if(name.length > 57) {
-			krnTrace("Write Data block error: File name too long!");
+			krnTrace("Write Directory block error: File name too long! name length : " + name.length);
 		}
-		else if(active.length != 1) {
-			krnTrace("Write Data block error: Mode is 1 character!");
+		else if(active != INACTIVE && active != ACTIVE) {
+			krnTrace("Write Directory block error: Active is not set: " + active);
 		}
-		else if(active != "1" || active != "0") {
-			krnTrace("Write Data block error: Active should be either 0 or 1!");
+		else if(lock != LOCK_INACTIVE && lock != LOCK_ACTIVE) {
+			krnTrace("Write Directory block error: Lock is not set: " + lock);
 		}
-		else if(lock.length != 1) {
-			krnTrace("Write Data block error: Mode is 1 character!");
-		}
-		else if(lock != "1" || lock != "0") {
-			krnTrace("Write Data block error: Lock should be either 0 or 1!");
-		}
-		else if(size.length !== 3) {
-			krnTrace("Write Data block error: Size needs to be 3 characters!");
+		else if(size.length != 3) {
+			krnTrace("Write Directory block error: Size needs to be 3 characters! length : " + size.length);
 		}
 		else if(dataBlockTSB.length != 3) {
-			krnTrace("Write Data block error: Data Block TSB reference should be 3 characters");
+			krnTrace("Write Directory block error: Data Block TSB reference should be 3 characters length: " + dataBlockTSB);
 		}
 		else {
 			// ok to write
@@ -474,17 +470,11 @@ function FSDD() {
 	this.writeDataBlock = function(tsbString, active, nextBlockTSB, dataBlock) {
 		
 		// check the parameters
-		if(name.length < 1) {
-			krnTrace("Write Data block error: File name too short!");
-		}
-		else if(name.length > 57) {
+		if(name.length > 56) {
 			krnTrace("Write Data block error: File name too long!");
 		}
-		else if(active.length != 1) {
-			krnTrace("Write Data block error: Mode is 1 character!");
-		}
-		else if(active != "1" || active != "0") {
-			krnTrace("Write Data block error: Active should be either 0 or 1!");
+		else if(active != INACTIVE && active != ACTIVE) {
+			krnTrace("Write Data block error: Active is not set: " + active);
 		}
 		else if(nextBlockTSB.length != 3) {
 			krnTrace("Write Data block error: Data Block TSB reference should be 3 characters");
@@ -493,7 +483,7 @@ function FSDD() {
 			// ok to write 
 			
 			// create the single data string from the indformation passed
-			var dirBlock = active + nextBLockTSB + dataBlock;
+			var dirBlock = active + nextBlockTSB + dataBlock;
 			
 			// write to the directory string to the disk
 			_Disk.write(tsbString, dirBlock);
