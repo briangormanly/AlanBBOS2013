@@ -130,6 +130,39 @@ function shellInit() {
     });
     this.commandList[this.commandList.length] = sc;
     
+    
+    // write to a file
+    sc = new ShellCommand();
+    sc.command = "write";
+    sc.description = "- write to a file pass name as parameter 1 then data as parameter 2 in quotes";
+    sc.function = (function(args){
+    	// check that the user provided a valid argument
+    	if (args.length > 0) {
+    		// check the length of the filename 
+    		if (args[0].length <= 57) {
+    			// check the data
+    			if(args[1].length > 0) {
+    				// write the data
+    				krnFSDD.write(args[0], ACTIVE, args[1]);
+    			}
+    			else {
+    				_StdIn.displayTextOnNewLine("Please provide valid data to write!");
+    			}
+    		}
+    		else {
+    			// tell the user the filename was too long
+    			_StdIn.displayTextOnNewLine("Please provide a valid file name less then 57 characters!");
+    		}
+    	}
+    	else {
+    		// tell user to enter a valid pid
+    		_StdIn.displayTextOnNewLine("Please provide a valid file name!");
+    	}
+        
+    });
+    this.commandList[this.commandList.length] = sc;
+
+    
     // display processes
     sc = new ShellCommand();
     sc.command = "top";

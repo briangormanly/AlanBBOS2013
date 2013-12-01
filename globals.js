@@ -78,6 +78,24 @@ var BLOCKS = 8;
 // size of individual blocks
 var BLOCK_SIZE = 64;
 
+// mode
+	var MODE_NONE = 0;
+	var MODE_X = 1;
+	var MODE_W = 2;
+	var MODE_WX = 3;
+	var MODE_R = 4;
+	var MODE_RX = 5;
+	var MODE_RW = 6;
+	var MODE_RWX = 7;
+	
+	// lock
+	var LOCK_INACTIVE = 0;
+	var LOCK_ACTIVE = 1;
+	
+	// active
+	var INACTIVE = 0;
+	var ACTIVE = 1;
+
 // null character to show end of file
 NULL_CHR = "00";
 

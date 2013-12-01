@@ -1,25 +1,6 @@
 
 function FSDD() {
 	
-	// Constants
-
-	// mode
-	var MODE_NONE = 0;
-	var MODE_X = 1;
-	var MODE_W = 2;
-	var MODE_WX = 3;
-	var MODE_R = 4;
-	var MODE_RX = 5;
-	var MODE_RW = 6;
-	var MODE_RWX = 7;
-	
-	// lock
-	var LOCK_INACTIVE = 0;
-	var LOCK_ACTIVE = 1;
-	
-	// active
-	var INACTIVE = 0;
-	var ACTIVE = 1;
 	
 	this.init = function() {
 		// check to see if the drive is formatted
@@ -132,23 +113,54 @@ function FSDD() {
     	
     };
     
-    /**
-     * write (overwrite) file data
-     * @param dirTSB - the directory TSB of the file
-     * @param data - the data to write to the files data blocks
-     */
-    this.writeTSB = function(dirTSB, data) {
     
-    };
     
     /**
      * write (overwrite) file data
      * @param fileName - name of the file to overwrite
      * @param data - the data to write to the files data block
      */
-    this.write = function(fileName, data) {
+    this.write = function(fileName, active, data) {
     	
+    	// get the directory tsb
+    	var dirTSB = this.getTSBByName(fileName);
+
+    	// write the data to the block
+    	this.writeTSB(this.getDirDataTSB(dirTSB), active, data);
     };
+    
+    /**
+     * write (overwrite) file data
+     * @param dirTSB - the directory TSB of the file
+     * @param data - the data to write to the files data blocks
+     */
+    this.writeTSB = function(dataTSB, active, data) {
+    	
+    	// check the size of the data to see if it can be saved in the current block
+    	if(data.length > (BLOCK_SIZE - 4)) {
+    		// data is larger then block
+    		
+    		// allocate another block
+    		var nextBlock = this.getEmptyDataBlock();
+    		
+    		// create the initial block with a reference to the next
+    		this.writeDataBlock(dataTSB, active, nextBlock, data.substring(0, (BLOCK_SIZE - 4)));
+    		
+    		//alert("next call will be: " + nextBlock + " A; " + active + " data: " + data.substring(BLOCK_SIZE - 4));
+    		// call this method recursively for the next block
+    		this.writeTSB(nextBlock, active, data.substring(BLOCK_SIZE - 4));
+    		
+    	}
+    	else {
+    		// data will fit in block
+    		//alert("data to write: " + this.getDirDataTSB(dirTSB) + " A; " + active + " data: " + data);
+    		this.writeDataBlock(dataTSB, active, "---", data);
+    	}
+    	
+    	// update the display
+	    hostDivDisk();
+    };
+    
     
     
     
@@ -168,9 +180,10 @@ function FSDD() {
     	
     	// check for the first open block
     	while(trackCounter < DIRECTORY_TRACKS) {
+    		
     		// create the tsb
     		var tsbString = trackCounter.toString() + sectorCounter.toString() + blockCounter.toString();
-    		
+
     		// get the block
     		var block = _Disk.read(tsbString);
 	
@@ -207,21 +220,21 @@ function FSDD() {
     		blockCounter++;
     		
     		// check to see if we need to increate the sector
-    		if (blockCounter >= BLOCKS) {
+    		if (blockCounter > (BLOCKS - 1)) {
     			// increase the sectors
     			sectorCounter++;
     			
     			// reset the block
-    			blockConuter = 0;
+    			blockCounter = 0;
     		}
     		
     		// check to see if we need to increase the track
-    		if(sectorCounter >= SECTORS) {
+    		if(sectorCounter > (SECTORS - 1)) {
     			// increase the number of tracks
     			trackCounter++;
     			
     			// reset the sector counter
-    			sectorConuter = 0;
+    			sectorCounter = 0;
     		}
     	}
     	
@@ -284,7 +297,7 @@ function FSDD() {
     			sectorCounter++;
     			
     			// reset the block
-    			blockConuter = 0;
+    			blockCounter = 0;
     		}
     		
     		// check to see if we need to increase the track
@@ -293,7 +306,7 @@ function FSDD() {
     			trackCounter++;
     			
     			// reset the sector counter
-    			sectorConuter = 0;
+    			sectorCounter = 0;
     		}
     	}
     	
@@ -316,8 +329,10 @@ function FSDD() {
 					// create a unique key out of the track sector and block
 					var tsbString = i.toString() + j.toString() + k.toString();
 					
+					
 					// see if this tsb contains the name we are looking for
-					if(this.getFileName(tsbString) === name) {
+					//alert(this.getDirFileName(tsbString) + " == name : " + name);
+					if(this.getDirFileName(tsbString) == name) {
 						// match
 						return tsbString;
 						
@@ -337,7 +352,7 @@ function FSDD() {
 	 * @param tsbString - Directory TSB
 	 * @return fileLock
 	 */
-	this.getFileActive = function(tsbString) {
+	this.getDirFileActive = function(tsbString) {
 		if(_Disk.read(tsbString).substring(0, 1) === 0) {
 			return INACTIVE;
 		}
@@ -346,35 +361,39 @@ function FSDD() {
 		}
 	};
 	
+	this.getDirDataTSB = function(tsbString) {
+		return _Disk.read(tsbString).substring(1, 4);
+	};
+	
 	
 	/**
 	 * gets the mode for the file at the provided directory tsb
 	 * @param tsbString - Directory TSB
 	 * @return fileMode
 	 */
-	this.getFileMode = function(tsbString) {
-		if(_Disk.read(tsbString).substring(4, 1) === 0) {
+	this.getDirFileMode = function(tsbString) {
+		if(_Disk.read(tsbString).substring(4, 5) === 0) {
 			return MODE_NONE;
 		}
-		else if(_Disk.read(tsbString).substring(4, 1) === 1) {
+		else if(_Disk.read(tsbString).substring(4, 5) === 1) {
 			return MODE_X;
 		}
-		else if(_Disk.read(tsbString).substring(4, 1) === 2) {
+		else if(_Disk.read(tsbString).substring(4, 5) === 2) {
 			return MODE_W;
 		}
-		else if(_Disk.read(tsbString).substring(4, 1) === 3) {
+		else if(_Disk.read(tsbString).substring(4, 5) === 3) {
 			return MODE_WX;
 		}
-		else if(_Disk.read(tsbString).substring(4, 1) === 4) {
+		else if(_Disk.read(tsbString).substring(4, 5) === 4) {
 			return MODE_R;
 		}
-		else if(_Disk.read(tsbString).substring(4, 1) === 5) {
+		else if(_Disk.read(tsbString).substring(4, 5) === 5) {
 			return MODE_RX;
 		}
-		else if(_Disk.read(tsbString).substring(4, 1) === 6) {
+		else if(_Disk.read(tsbString).substring(4, 5) === 6) {
 			return MODE_RW;
 		}
-		else if(_Disk.read(tsbString).substring(4, 1) === 7) {
+		else if(_Disk.read(tsbString).substring(4, 5) === 7) {
 			return MODE_RWX;
 		}
 		else {
@@ -384,16 +403,17 @@ function FSDD() {
 		
 	};
 	
+	
 	/**
 	 * gets the lock for the file at the provided directory tsb
 	 * @param tsbString - Directory TSB
 	 * @return fileLock
 	 */
-	this.getFileLock = function(tsbString) {
-		if(_Disk.read(tsbString).substring(5, 1) === 0) {
+	this.getDirFileLock = function(tsbString) {
+		if(_Disk.read(tsbString).substring(5, 6) === 0) {
 			return LOCK_INACTIVE;
 		}
-		else if(_Disk.read(tsbString).substring(5, 1) === 1) {
+		else if(_Disk.read(tsbString).substring(5, 6) === 1) {
 			return LOCK_ACTIVE;
 		}
 	};
@@ -403,8 +423,8 @@ function FSDD() {
 	 * @param tsbString - Directory TSB
 	 * @return fileSize
 	 */
-	this.getFileSize = function(tsbString) {
-		return _Disk.read(tsbString).substring(6, 3);
+	this.getDirFileSize = function(tsbString) {
+		return _Disk.read(tsbString).substring(6, 8);
 	};
 	
 	/**
@@ -412,8 +432,9 @@ function FSDD() {
 	 * @param tsbString - Directory TSB
 	 * @return fileName
 	 */
-	this.getFileName = function(tsbString) {
-		return _Disk.read(tsbString).substring(9, 55);
+	this.getDirFileName = function(tsbString) {
+		//alert("file name:" + _Disk.read(tsbString).substring(8));
+		return _Disk.read(tsbString).substring(8);
 	};
 	
 	/**
@@ -434,7 +455,7 @@ function FSDD() {
 		if(name.length < 1) {
 			krnTrace("Write Directory block error: File name too short! name length : " + name.length);
 		}
-		else if(name.length > 57) {
+		else if(name.length > 56) {
 			krnTrace("Write Directory block error: File name too long! name length : " + name.length);
 		}
 		else if(active != INACTIVE && active != ACTIVE) {
@@ -469,9 +490,11 @@ function FSDD() {
 	 */
 	this.writeDataBlock = function(tsbString, active, nextBlockTSB, dataBlock) {
 		
+		//alert("start: " + tsbString + " a:" + active + " next:" + nextBlockTSB + " data:" + dataBlock);
+		
 		// check the parameters
-		if(name.length > 56) {
-			krnTrace("Write Data block error: File name too long!");
+		if(dataBlock.length > 60) {
+			krnTrace("Write Data block error: Data block too long!");
 		}
 		else if(active != INACTIVE && active != ACTIVE) {
 			krnTrace("Write Data block error: Active is not set: " + active);
@@ -484,6 +507,8 @@ function FSDD() {
 			
 			// create the single data string from the indformation passed
 			var dirBlock = active + nextBlockTSB + dataBlock;
+			
+			//alert("writing: " + dirBlock);
 			
 			// write to the directory string to the disk
 			_Disk.write(tsbString, dirBlock);
