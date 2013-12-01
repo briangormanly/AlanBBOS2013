@@ -4,6 +4,11 @@
    Utility functions.
    -------- */
 
+// allow replacing string part
+String.prototype.replaceAt=function(index, character) {
+	return this.substr(0, index) + character + this.substr(index+character.length);
+}   
+
 function trim(str) {     // Use a regular expression to remove leading and trailing spaces.
 	return str.replace(/^\s+ | \s+$/g, "");
 	/* 

@@ -67,105 +67,188 @@ function Disk() {
     	// update the display
     	hostDivDisk();
     	
-    }
+    };
     
     /**
      * Create a file on the disk.
      */
     this.create = function(name, mode) {
-    	// create a sector counter
-    	var sectorCounter = 0;
     	
-    	// create a track counter
-    	var trackCounter = 0;
+    	// find an empty directory block
+    	var dirBlockTSB = this.getEmptyDirectoryBlock();
     	
-    	// create a black counter 
-    	var blockCounter = 0;
-    	
-    	// create a found flag for the directory entry
-    	var flag = false;
-    	
-    	// check that we stay within the directory and that a location has 
-    	// not yet been found
-    	while(sectorCounter < DIRECTORY_TRACKS && !flag) {
-    		// create the tsb
-    		var tsbString = sectorCounter.toString() + trackCounter.toString() + blockCounter.toString();
+    	// check that the directory is not full
+    	if(dirBlockTSB != "-1") {
     		
-    		// get the block
-    		var block = localStorage.getItem(tsbString);
+    		// get the first available data block for the new file
+    		var dataBlockTSB = this.getEmptyDataBlock();
     		
-    		if(block[0] === "0") {
-    			// open block found
-    			
-    			// find location on disk out side the directory to write file
-
-    			// create a sector counter
-		    	var sectorMainCounter = DIRECTORY_TRACKS;
-		    	
-		    	// create a track counter
-		    	var trackMainCounter = 0;
-		    	
-		    	// create a black counter 
-		    	var blockMainCounter = 0;
-		    	
-		    	// create a found flag for the main data entry
-		    	var mainFlag = false;
-		    	
-		    	// check for the first open block
-		    	while(sectorCounter < TRACKS && !mainFlag) {
-		    		
-		    	}
-		    	
-
-    			
-    			// create directory entry
-    			
-    			// set flag to break
-    			flag = true;
+    		// check to see that there was a data block available!
+    		if(dataBlockTSB != "-1") {
+    			// check that the name is less then 57 char long
+    			if(name.length > 57) {
+    				krnTrace("File name too long!");
+    			}
+    			else {
+    				// build the new directory block
+        			var dirBlock = "1" + dataBlockTSB + mode + name;
+        			
+        			//write the first datablock TSB to the directory block
+        			localStorage.setItem(dirBlockTSB, dirBlock);
+    			}
+    		}
+    		else {
+    			// data space is full!
+        		krnTrace("No space in the in the file system!");
     		}
     		
     		
     	}
-    	
-    	
-
-    	
-
-
-    	
-    	
-    	
-    	// get first available space in the directory
-    	for(int i=0; i<DIRECTORY_TRACKS; i++) {
-    		for(var j=0; j<SECTORS; j++) {
-				for(var k=0; k<BLOCKS; k++) {
-					
-					// create a unique key out of the track sector and block
-					var tsbString = i.toString() + j.toString() + k.toString();
-						
-					// check to see if this block is in use 
-					if() {
-						// found empty block, create directory record
-						
-						// set the found flag
-						break;
-						
-					}
-				}
-			}
+    	else {
+    		// directory is full!
+    		krnTrace("No space in the in the file system directory!");
     	}
     	
+    	// update the display
+    	hostDivDisk();
     	
-    }
+    };
     
     
     this.write = function() {
     
-    }
+    };
     
     this.overwrite = function() {
     	
-    }
+    };
+    
+    
+    /**
+     * finds the first availible direcotry block
+     * returns the TSB of the block and marks the block as un-available
+     */
+    this.getEmptyDirectoryBlock = function() {
+    	// create a sector counter
+    	var trackCounter = 0;
+    	
+    	// create a track counter
+    	var sectorCounter = 0;
+    	
+    	// create a black counter 
+    	var blockCounter = 0;
+    	
+    	// check for the first open block
+    	while(trackCounter < DIRECTORY_TRACKS) {
+    		// create the tsb
+    		var tsbString = trackCounter.toString() + sectorCounter.toString() + blockCounter.toString();
+    		
+    		// get the block
+    		var block = localStorage.getItem(tsbString);
+	
+    		// check the first bit for availability of the block
+    		if(block.substring(0, 1) === "0" || block.substring(0, 1) === "~") {
+    			
+    			// set the block to unavailable
+    			block = "1---";
+    			localStorage.setItem(tsbString, block);
+    		
+    			// return the TSB, done!
+    			return tsbString;
+    			
+    		}
+    		
+    		// increase the block counter
+    		blockCounter++;
+    		
+    		// check to see if we need to increate the sector
+    		if (blockCounter >= BLOCKS) {
+    			// increase the sectors
+    			sectorCounter++;
+    			
+    			// reset the block
+    			blockConuter = 0;
+    		}
+    		
+    		// check to see if we need to increase the track
+    		if(sectorCounter >= SECTORS) {
+    			// increase the number of tracks
+    			trackCounter++;
+    			
+    			// reset the sector counter
+    			sectorConuter = 0;
+    		}
+    	}
+    	
+    	// no empty block found!
+    	return -1;
+    		
+    };
+    
+    /**
+     * find an available data block
+     * returns the tsb of the block found and marks the block as un-available
+     */
+    this.getEmptyDataBlock = function() {
+    	// create a sector counter
+    	var trackCounter = DIRECTORY_TRACKS;
+    	
+    	// create a track counter
+    	var sectorCounter = 0;
+    	
+    	// create a black counter 
+    	var blockCounter = 0;
+    	
+    	// check for the first open block
+    	while(trackCounter <= TRACKS) {
+    		// create the tsb
+    		var tsbString = trackCounter.toString() + sectorCounter.toString() + blockCounter.toString();
+    		
+    		// get the block
+    		var block = localStorage.getItem(tsbString);
+    		
+    		
+	
+    		// check the first bit for availability of the block
+    		if(block.substring(0, 1) === "0" || block.substring(0, 1) === "~") {
+    			
+    			// set the block to unavailable and null string in the data area
+    			block = "1---";
+    			localStorage.setItem(tsbString, block);
+
+    			// return the TSB, done!
+    			return tsbString;
+    			
+    		}
+    		
+    		// increase the block counter
+    		blockCounter++;
+    		
+    		// check to see if we need to increate the sector
+    		if (blockCounter >= BLOCKS) {
+    			// increase the sectors
+    			sectorCounter++;
+    			
+    			// reset the block
+    			blockConuter = 0;
+    		}
+    		
+    		// check to see if we need to increase the track
+    		if(sectorCounter >= SECTORS) {
+    			// increase the number of tracks
+    			trackCounter++;
+    			
+    			// reset the sector counter
+    			sectorConuter = 0;
+    		}
+    	}
+    	
+    	// no empty block found
+    	return -1;
+
+    };
+    
+    
 
 }
 

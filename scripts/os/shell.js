@@ -91,6 +91,31 @@ function shellInit() {
     });
     this.commandList[this.commandList.length] = sc;
     
+    // create new file
+    sc = new ShellCommand();
+    sc.command = "create";
+    sc.description = "- create a new file pass name as parameter";
+    sc.function = (function(args){
+    	// check that the user provided a valid argument
+    	if (args.length > 0) {
+    		// check the length of the filename 
+    		if (args[0].length <= 57) {
+    			// create the file
+        		_Disk.create(args[0], "111");
+    		}
+    		else {
+    			// tell the user the filename was too long
+    			_StdIn.displayTextOnNewLine("Please provide a valid file name less then 57 characters!");
+    		}
+    	}
+    	else {
+    		// tell user to enter a valid pid
+    		_StdIn.displayTextOnNewLine("Please provide a valid file name!");
+    	}
+        
+    });
+    this.commandList[this.commandList.length] = sc;
+    
     // display processes
     sc = new ShellCommand();
     sc.command = "top";

@@ -78,6 +78,8 @@ var BLOCKS = 8;
 // size of individual blocks
 var BLOCK_SIZE = 64;
 
+// null character to show end of file
+NULL_CHR = "00";
 
 
 
