@@ -91,6 +91,20 @@ function shellInit() {
     });
     this.commandList[this.commandList.length] = sc;
     
+    
+    // format the file system
+    sc = new ShellCommand();
+    sc.command = "format";
+    sc.description = "- format the disk filesystem";
+    sc.function = (function(args){
+    	
+    	krnFSDD.fullFormat();
+    	
+        
+    });
+    this.commandList[this.commandList.length] = sc;
+
+
     // create new file
     sc = new ShellCommand();
     sc.command = "create";
@@ -101,7 +115,7 @@ function shellInit() {
     		// check the length of the filename 
     		if (args[0].length <= 57) {
     			// create the file
-        		_Disk.create(args[0], "111");
+        		krnFSDD.create(args[0], "111");
     		}
     		else {
     			// tell the user the filename was too long

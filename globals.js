@@ -51,7 +51,7 @@ var _CPU = null;
 
 var _Memory = null;
 
-var _Disk = null;
+
 
 var _Scheduler = null;
 
@@ -110,6 +110,7 @@ var _SarcasticMode = false;
 
 // Global Device Driver Objects - page 12
 var krnKeyboardDriver = null;
+var krnFSDD = null;	// disk device driver
 
 // For testing...
 var _GLaDOS = null;
