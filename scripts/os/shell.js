@@ -150,8 +150,32 @@ function shellInit() {
     		if (args[0].length <= 57) {
     			// check the data
     			if(args[1].length > 0) {
+    				// check for the presence of a double quote
+    				if(args[1].substring(0, 1) === "\"") {
+    					// start string to write to file
+    					var writeString = "";
+			    		for(var i=1; i < args.length; i++) {
+			    			writeString = writeString.concat(args[i]);
+			    			writeString = writeString.concat(" ");
+			    		}
+			    		
+			    		// check for the quotes in the writeString and remove as necassary
+			    		if(writeString.substring(0, 1) === "\"") {
+			    			writeString = writeString.substring(1);
+			    		}
+			    		
+			    		// check for the quotes in the writeString and remove as necassary
+			    		if(writeString.substring((writeString.length - 2), (writeString.length - 1)) === "\"") {
+			    			writeString = writeString.substring(0, (writeString.length - 2));
+			    		}
+			    		
+    				}
+    				
+    				
+
+
     				// write the data
-    				if(krnFSDD.write(args[0], ACTIVE, args[1]) == 1) {
+    				if(krnFSDD.write(args[0], ACTIVE, writeString) == 1) {
     					// success!
     					_StdIn.displayTextOnNewLine("File written to successfully!");
     				}
@@ -162,6 +186,75 @@ function shellInit() {
     			else {
     				_StdIn.displayTextOnNewLine("Please provide valid data to write!");
     			}
+    		}
+    		else {
+    			// tell the user the filename was too long
+    			_StdIn.displayTextOnNewLine("Please provide a valid file name less then 57 characters!");
+    		}
+    	}
+    	else {
+    		// tell user to enter a valid pid
+    		_StdIn.displayTextOnNewLine("Please provide a valid file name!");
+    	}
+        
+    });
+    this.commandList[this.commandList.length] = sc;
+    
+    
+    // delete file
+    sc = new ShellCommand();
+    sc.command = "delete";
+    sc.description = "- delete a file pass name as parameter";
+    sc.function = (function(args){
+    	// check that the user provided a valid argument
+    	if (args.length > 0) {
+    		// check the length of the filename 
+    		if (args[0].length <= 57) {
+    			// delete the file
+        		if(krnFSDD.removeByFileName(args[0]) != -1) {
+        			// success!
+        			_StdIn.displayTextOnNewLine("File deleted successfully!");
+        		}
+        		else {
+        			// filename exists
+        			_StdIn.displayTextOnNewLine("File name not found");
+        		}
+        		
+    		}
+    		else {
+    			// tell the user the filename was too long
+    			_StdIn.displayTextOnNewLine("Please provide a valid file name less then 57 characters!");
+    		}
+    	}
+    	else {
+    		// tell user to enter a valid pid
+    		_StdIn.displayTextOnNewLine("Please provide a valid file name!");
+    	}
+        
+    });
+    this.commandList[this.commandList.length] = sc;
+    
+    // read file
+    sc = new ShellCommand();
+    sc.command = "read";
+    sc.description = "- read a file pass name as parameter";
+    sc.function = (function(args){
+    	// check that the user provided a valid argument
+    	if (args.length > 0) {
+    		// check the length of the filename 
+    		if (args[0].length <= 57) {
+    			// delete the file
+        		var fileString = krnFSDD.readFile(args[0]);
+        		
+        		// check the returned string
+        		if(fileString != "-1") {
+        			// output the file
+            		_StdIn.displayTextOnNewLine(fileString);
+        		}
+        		else {
+        			// filename was incorrect
+            		_StdIn.displayTextOnNewLine("Please provide a valid file name!");
+        		}
     		}
     		else {
     			// tell the user the filename was too long

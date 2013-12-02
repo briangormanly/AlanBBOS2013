@@ -2,6 +2,7 @@
 function FSDD() {
 	
 	var blockCounter = 0;
+	var currentRead = "";
 	
 	this.init = function() {
 		// check to see if the drive is formatted
@@ -416,7 +417,7 @@ function FSDD() {
 	 * @return fileLock
 	 */
 	this.getDirFileActive = function(tsbString) {
-		if(_Disk.read(tsbString).substring(0, 1) === 0) {
+		if(_Disk.read(tsbString) === 0) {
 			return INACTIVE;
 		}
 		else if(_Disk.read(tsbString).substring(0, 1) === 1) {
@@ -547,6 +548,14 @@ function FSDD() {
 		return _Disk.read(tsbString).substring(8);
 	};
 
+	/**
+	 * gets the data from a datablock for the given tsb
+	 * @param tsbString - TSB
+	 * @return fileName
+	 */
+	this.getDataData = function(tsbString) {
+		return _Disk.read(tsbString).substring(4);
+	};
 	
 	
 	/**
@@ -627,7 +636,72 @@ function FSDD() {
 		}
 	};
 	
+	/**
+	 * Gets the data in a file and returns it as a string of characters
+	 * @param fileName - Name of file to retrieve 
+	 * @return fileString - String containing all file data
+	 */	
+	this.readFile = function(fileName) {
+		// reset the current readString
+		currentRead = "";
+		
+		// get the directory tsb
+    	var dirTSB = this.getTSBByName(fileName);
+    	
+    	if(dirTSB != -1) {
+    		// get the first data block TSB
+        	var dataTSB = this.getDirDataTSB(dirTSB); 
+        	
+        	// kick off the read operation down the chain and return the string
+        	this.read(dataTSB);
+
+        	// return the string
+        	return currentRead;
+    	}
+    	else {
+    		return -1;
+    	}
+	};
 	
+	
+	/**
+	 * read a file by following blocks in its chain recursively using this funciton
+	 * @param dirTSBString - the TSB of the first data entry for the file
+	 */
+	this.read = function(tsbString) {
+
+		// check for another link in the chain
+		var nextTSB = this.getDirDataTSB(tsbString);
+		
+		// record to the currentRead
+		currentRead += this.getDataData(tsbString);
+		
+		if(nextTSB != "---") {
+			this.read(nextTSB);
+		}
+		
+	};
+	
+		
+	/**
+	 * Delete a file by 0'ing out all the blocks in its chain
+	 * @param dirTSBString - the TSB of the directory entry for the file
+	 */
+	this.removeByFileName = function(fileName) {
+		// get the directory tsb
+    	var dirTSB = this.getTSBByName(fileName);
+    	
+    	// check to see if the file was found
+    	if(dirTSB != "-1") {
+    		// delete the file
+    		this.remove(dirTSB);
+    	}
+    	else {
+    		// file not found
+    		return -1;
+    	}
+    	
+	}
 	
 	/**
 	 * Delete a file by 0'ing out all the blocks in its chain
