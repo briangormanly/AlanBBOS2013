@@ -5,6 +5,10 @@
  * Manages access and management of memory
  */
 
+// swap file management
+var _Swap = new Array();
+
+ 
 function MemoryManager() {
     
 	// will hold the total number of memory slots
@@ -21,6 +25,7 @@ function MemoryManager() {
     	for(var i=0; i < this.NUM_MEMORY_SLOTS; i++) {
     		this.blockStatus[i] = null;
     	}
+    	
     };
 	
     
@@ -49,7 +54,13 @@ function MemoryManager() {
     	}
     	else {
     		// no open memory available!
-    		return -1;
+    		//return -1;
+    		
+    		// create swap file
+    		this.createSwap(pcb.pid);
+    		
+    		// populate swap file with memory data
+    		this.writeToSwap(pcb.pid, pcb.block);
     	}
     	
     	
@@ -72,7 +83,7 @@ function MemoryManager() {
 		}
     	
 		//alert(_Memory);
-    }
+    };
     
     
     /**
@@ -121,7 +132,7 @@ function MemoryManager() {
     	else {
     		_Memory[(+pcb.block * MAX_PROGRAM_SIZE) + +location] = thisByte;
     	}
-	}
+	};
 	
     
     /**
@@ -131,7 +142,7 @@ function MemoryManager() {
 		var dec = parseInt(hex, 16);
 		
 		return dec;
-	}
+	};
 	
 	/**
 	 * check that the address is within the valid range of memory addresses
@@ -142,10 +153,64 @@ function MemoryManager() {
 		var limit = _CurrentProcess.limit;
 		// Make sure address is between those bounds
 		return ( address >= base && address <= limit );
-	}
+	};
 	
 	
-	
+	/**
+	 * create a swap file
+	 */
+    this.createSwapFile = function(pid) {
+    	// get the number of existing swap files to generate a name
+    	var nextSwapNum = _Swap.length;
+    	
+    	// create a new Swap file
+    	krnFSDD.create("SWAP" + nextSwapNum, MODE_RX, LOCK_ACTIVE);
+    	
+    	// get the TSB for the new swap file
+    	var tsbSring = krnFSDD.getTSBByName("SWAP" + nextSwapNum);
+    	
+    	// create the Swap object
+    	var thisSwap = new Swap();
+    	thisSwap.pid = pid;
+    	thisSwap.dirTSB = tsbString;
+    	thisSwap.fileName = "SWAP" + nextSwapNum;
+    	
+    	// add the swap object to the swap object array
+    	_Swap.push(thisSwap);
+    	
+    	// return the Swap object
+    	return thisSwap;
+    	
+    };
+    
+    this.writeToSwap = function(pid, memory) {
+    	// check to see if a valid swap file exists for this process
+    	var thisSwap = this.findSwap(pid);
+    	if(thisSwap == -1) {
+    		// create new swap
+    		thisSwap = this.createSwapFile(pid);
+    	}
+    	
+    	// write to the swap file
+    	krnFSDD.write(thisSwap.fileName, ACTIVE, memory);
+    	
+    };
+    
+    // find swap object in array by pid
+    this.findSwap = function(pid) {
+    	if(pid != null) {
+    		for(i in this._Swap) {
+    			if(this._Swap[i].pid = pid) {
+    				// match
+    				return this._Swap
+    			}		
+    		}
+    	}
+    	
+    	//nothing found
+    	return -1;
+    };
+
     
     
 }

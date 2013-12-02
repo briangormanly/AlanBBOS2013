@@ -115,7 +115,7 @@ function shellInit() {
     		// check the length of the filename 
     		if (args[0].length <= 57) {
     			// create the file
-        		if(krnFSDD.create(args[0], "7", "1") != -1) {
+        		if(krnFSDD.create(args[0], MODE_RWX, LOCK_INACTIVE) != -1) {
         			// success!
         			_StdIn.displayTextOnNewLine("File created successfully!");
         		}

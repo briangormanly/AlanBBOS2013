@@ -1,7 +1,10 @@
 
 function FSDD() {
 	
+	// keep track of blocks for recurive algo
 	var blockCounter = 0;
+	
+	// keep track of read data for recursive algo
 	var currentRead = "";
 	
 	this.init = function() {
@@ -121,8 +124,7 @@ function FSDD() {
     	}
     	
     };
-    
-    
+
     
     /**
      * write (overwrite) file data
@@ -446,6 +448,9 @@ function FSDD() {
 			// write the new block to disk
 			_Disk.write(tsbString, modifiedBlock);
 		}
+		
+		// update the display
+	    hostDivDisk();
 	};
 	
 	this.getDirDataTSB = function(tsbString) {
@@ -535,6 +540,9 @@ function FSDD() {
 			// write the new block to disk
 			_Disk.write(tsbString, modifiedBlock);
 		}
+		
+		// update the display
+	    hostDivDisk();
 	};
 	
 	
@@ -700,7 +708,6 @@ function FSDD() {
     		// file not found
     		return -1;
     	}
-    	
 	}
 	
 	/**
@@ -718,6 +725,9 @@ function FSDD() {
 		
 		// 0 out the directory entry
 		this.setDirFileActive(dirTSBString, INACTIVE);
+		
+		// update the display
+		hostDivDisk();
 	};
 	
     
