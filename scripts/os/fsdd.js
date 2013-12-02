@@ -1,6 +1,7 @@
 
 function FSDD() {
 	
+	var blockCounter = 0;
 	
 	this.init = function() {
 		// check to see if the drive is formatted
@@ -73,6 +74,13 @@ function FSDD() {
     	
     	// check the disk
     	if(this.checkDisk()) {
+    		
+    		// check that the name is not already taken
+    		if(this.getTSBByName(name) != -1) {
+    			// log the failure (file with same name already exists) and kick error out to the shell
+    			krnTrace("Filename is already in use on the filesystem!");
+	    		return -1;
+    		}	
     	
 	    	// find an empty directory block
 	    	var dirBlockTSB = this.getEmptyDirectoryBlock();
@@ -119,14 +127,48 @@ function FSDD() {
      * write (overwrite) file data
      * @param fileName - name of the file to overwrite
      * @param data - the data to write to the files data block
+     * @return -1 if error, 1 if successful
      */
     this.write = function(fileName, active, data) {
     	
     	// get the directory tsb
     	var dirTSB = this.getTSBByName(fileName);
 
-    	// write the data to the block
-    	this.writeTSB(this.getDirDataTSB(dirTSB), active, data);
+    	// write the data to the block if there was a hit
+    	if(dirTSB != "-1") {
+    		// set the block counter to 0
+    		blockCounter = 1;
+    		
+    		// write the data
+    		this.writeTSB(this.getDirDataTSB(dirTSB), active, data);
+    		
+    		// get the count in the correct format
+    		var formatedSize = "";
+    		if(blockCounter > 0 && blockCounter < 10) {
+    			formattedSize = "00" + blockCounter;
+    		}
+    		else if(blockCounter < 100) {
+    			formattedSize = "0" + blockCounter;
+    		}
+    		else if(blockCounter < 1000) {
+    			formattedSize = blockCounter;
+    		}
+    		
+    		//("formatted size: " + formattedSize);
+
+    		// modify the directory and update the size
+    		this.setDirBlockSize(dirTSB, formattedSize);
+    		
+    		
+    		// return success
+    		return 1;
+    	}
+    	else {
+    		krnTrace("Filename entered was not found!");
+    		// kick back the error to the shell
+    		return -1;
+    	}
+    	
     };
     
     /**
@@ -140,9 +182,18 @@ function FSDD() {
     	if(data.length > (BLOCK_SIZE - 4)) {
     		// data is larger then block
     		
-    		// allocate another block
-    		var nextBlock = this.getEmptyDataBlock();
-    		
+    		// first check to see if we are overwriting a file that existed with more then one block allocated
+    		var orgNextTSB = this.getDirDataTSB(dataTSB);
+    		var nextBlock = "";
+    		if(orgNextTSB != "---") {
+    			// datablock has chain
+    			nextBlock = orgNextTSB;
+    		}
+    		else {
+    			// no additional block chained currently allocate another block
+    			nextBlock = this.getEmptyDataBlock();
+    		}
+
     		// create the initial block with a reference to the next
     		this.writeDataBlock(dataTSB, active, nextBlock, data.substring(0, (BLOCK_SIZE - 4)));
     		
@@ -150,8 +201,20 @@ function FSDD() {
     		// call this method recursively for the next block
     		this.writeTSB(nextBlock, active, data.substring(BLOCK_SIZE - 4));
     		
+    		// increment the blockCounter
+    		blockCounter++;
+    		
     	}
     	else {
+    		// check to see if this block used to be part of a chain
+    		var orgNextTSB = this.getDirDataTSB(dataTSB);
+    		
+    		if(orgNextTSB != "---") {
+    			// chain exists work down it to break all the links
+    			this.remove(orgNextTSB);
+    		}
+    		
+    		
     		// data will fit in block
     		//alert("data to write: " + this.getDirDataTSB(dirTSB) + " A; " + active + " data: " + data);
     		this.writeDataBlock(dataTSB, active, "---", data);
@@ -361,6 +424,29 @@ function FSDD() {
 		}
 	};
 	
+	this.setDirFileActive = function(tsbString, active) {
+		if(active == ACTIVE) {
+			// get the current block
+			var currentBlock = _Disk.read(tsbString);
+			
+			// modify the block
+			var modifiedBlock = "1" + currentBlock.substring(1);
+			
+			// write the new block to disk
+			_Disk.write(tsbString, modifiedBlock);
+		}
+		else {
+			// get the current block
+			var currentBlock = _Disk.read(tsbString);
+			
+			// modify the block
+			var modifiedBlock = "0" + currentBlock.substring(1);
+			
+			// write the new block to disk
+			_Disk.write(tsbString, modifiedBlock);
+		}
+	};
+	
 	this.getDirDataTSB = function(tsbString) {
 		return _Disk.read(tsbString).substring(1, 4);
 	};
@@ -428,6 +514,30 @@ function FSDD() {
 	};
 	
 	/**
+	 * Update the size of the Directory block
+	 * @param tsbString - tsb of the directory block
+	 * @param size - size to write to the block
+	 */
+	this.setDirBlockSize = function(tsbString, size) {
+		
+		// check the new size is the correct format
+		if(size.length != 3) {
+			krnTrace("Write Directory block error: Size needs to be 3 characters! length : " + size.length + " size value: " + size);
+		}
+		else {
+			// get the current block
+			var currentBlock = _Disk.read(tsbString);
+			
+			// modify the block
+			var modifiedBlock = currentBlock.substring(0, 5) + size + currentBlock.substring(8);
+			
+			// write the new block to disk
+			_Disk.write(tsbString, modifiedBlock);
+		}
+	};
+	
+	
+	/**
 	 * gets the name for the file at the provided directory tsb
 	 * @param tsbString - Directory TSB
 	 * @return fileName
@@ -436,6 +546,8 @@ function FSDD() {
 		//alert("file name:" + _Disk.read(tsbString).substring(8));
 		return _Disk.read(tsbString).substring(8);
 	};
+
+	
 	
 	/**
 	 * write a directory block to the directory setion 
@@ -514,6 +626,26 @@ function FSDD() {
 			_Disk.write(tsbString, dirBlock);
 		}
 	};
+	
+	
+	
+	/**
+	 * Delete a file by 0'ing out all the blocks in its chain
+	 * @param dirTSBString - the TSB of the directory entry for the file
+	 */
+	this.remove = function(dirTSBString) {
+		// check for another link in the chain
+		var nextTSB = this.getDirDataTSB(dirTSBString);
+		
+		if(nextTSB != "---") {
+			this.remove(nextTSB);
+			this.setDirFileActive(nextTSB, INACTIVE);
+		}
+		
+		// 0 out the directory entry
+		this.setDirFileActive(dirTSBString, INACTIVE);
+	};
+	
     
 }
     

@@ -115,7 +115,15 @@ function shellInit() {
     		// check the length of the filename 
     		if (args[0].length <= 57) {
     			// create the file
-        		krnFSDD.create(args[0], "7", "1");
+        		if(krnFSDD.create(args[0], "7", "1") != -1) {
+        			// success!
+        			_StdIn.displayTextOnNewLine("File created successfully!");
+        		}
+        		else {
+        			// filename exists
+        			_StdIn.displayTextOnNewLine("File name is already in use on the disk.");
+        		}
+        		
     		}
     		else {
     			// tell the user the filename was too long
@@ -143,7 +151,13 @@ function shellInit() {
     			// check the data
     			if(args[1].length > 0) {
     				// write the data
-    				krnFSDD.write(args[0], ACTIVE, args[1]);
+    				if(krnFSDD.write(args[0], ACTIVE, args[1]) == 1) {
+    					// success!
+    					_StdIn.displayTextOnNewLine("File written to successfully!");
+    				}
+    				else {
+    					_StdIn.displayTextOnNewLine("Invalid filename!");
+    				}
     			}
     			else {
     				_StdIn.displayTextOnNewLine("Please provide valid data to write!");
