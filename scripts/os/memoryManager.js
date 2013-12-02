@@ -54,13 +54,14 @@ function MemoryManager() {
     	}
     	else {
     		// no open memory available!
-    		//return -1;
+    		return -1;
     		
+    		// not sure what i am doing here yet.
     		// create swap file
-    		this.createSwap(pcb.pid);
+    		//this.createSwap(pcb.pid);
     		
     		// populate swap file with memory data
-    		this.writeToSwap(pcb.pid, pcb.block);
+    		//this.writeToSwap(pcb.pid, pcb.block);
     	}
     	
     	
