@@ -53,19 +53,69 @@ function MemoryManager() {
     		return openBlock;
     	}
     	else {
-    		// no open memory available!
+    		// no open real memory available!
+    		
+    		// create a swap file
+    		this.createSwapFile(pcb);
+    		
     		return -1;
-    		
-    		// not sure what i am doing here yet.
-    		// create swap file
-    		//this.createSwap(pcb.pid);
-    		
-    		// populate swap file with memory data
-    		//this.writeToSwap(pcb.pid, pcb.block);
     	}
     	
     	
     };
+    
+    
+    /**
+	 * create a swap file
+	 */
+    this.createSwapFile = function(pcb) {
+    	// generate the name of the swap file
+    	var fileName = "~SWAP" + pcb.pid + ".swp";
+    	
+    	// create a new Swap file
+    	krnFSDD.create(fileName, MODE_RX, LOCK_ACTIVE);
+    	
+    	// return the TSB for the new file
+    	return tsbSring = krnFSDD.getTSBByName("~SWAP" + pcb.pid + ".swp");
+    	
+    };
+    
+    this.writeToSwap = function(pid, memory) {
+    	// check to see if a valid swap file exists for this process
+    	var thisSwap = this.findSwap(pid);
+    	
+    	// get the filename ready
+    	var fileName = "~SWAP" + pid + ".swp";
+    	
+    	if(thisSwap == -1) {
+    		// create new swap
+    		thisSwap = this.createSwapFile(pid);
+    	}
+    	
+    	// write the swap memory to swap file
+    	krnFSDD.write(fileName, ACTIVE, memory);
+    	
+    };
+    
+    // find swap object by pid
+    this.findSwap = function(pid) {
+    	// generate the name of the swap file
+    	var fileName = "~SWAP" + pid + ".swp";
+    	
+    	// search for the file
+    	var dirTSB = krnFSDD.getTSBByName(fileName);
+    	
+    	// if found return 
+    	if(dirTSB != -1) {
+    		return dirTSB;
+    	}
+    	else {
+	    	//nothing found
+	    	return -1;
+    	}
+    };
+    
+    
     
     // TODO: de allocate memory for a process 
     this.dealloc = function(pcb) {
@@ -73,15 +123,26 @@ function MemoryManager() {
     };
     
     
-    this.load = function(block, commandArray) {
-    	var startingByte = block * MAX_PROGRAM_SIZE;
+    this.load = function(pcb, commandArray) {
+    	// check to see if this is getting loaded into swap space
+    	if(pcb.block === -1) {
+    		// write to swap
+    		this.writeToSwap(pcb.pid, commandArray);
+    		
+    		
+    	}
+    	else {
+    		var startingByte = pcb.block * MAX_PROGRAM_SIZE;
+
+			for(i in commandArray) {
+				// add the instruction to memory
+				_Memory[+startingByte + +i] = commandArray[i];
+				
+			}
+    	}
     	
     	
-    	for(i in commandArray) {
-			// add the instruction to memory
-			_Memory[+startingByte + +i] = commandArray[i];
-			
-		}
+    	
     	
 		//alert(_Memory);
     };
@@ -155,62 +216,6 @@ function MemoryManager() {
 		// Make sure address is between those bounds
 		return ( address >= base && address <= limit );
 	};
-	
-	
-	/**
-	 * create a swap file
-	 */
-    this.createSwapFile = function(pid) {
-    	// get the number of existing swap files to generate a name
-    	var nextSwapNum = _Swap.length;
-    	
-    	// create a new Swap file
-    	krnFSDD.create("SWAP" + nextSwapNum, MODE_RX, LOCK_ACTIVE);
-    	
-    	// get the TSB for the new swap file
-    	var tsbSring = krnFSDD.getTSBByName("SWAP" + nextSwapNum);
-    	
-    	// create the Swap object
-    	var thisSwap = new Swap();
-    	thisSwap.pid = pid;
-    	thisSwap.dirTSB = tsbString;
-    	thisSwap.fileName = "SWAP" + nextSwapNum;
-    	
-    	// add the swap object to the swap object array
-    	_Swap.push(thisSwap);
-    	
-    	// return the Swap object
-    	return thisSwap;
-    	
-    };
-    
-    this.writeToSwap = function(pid, memory) {
-    	// check to see if a valid swap file exists for this process
-    	var thisSwap = this.findSwap(pid);
-    	if(thisSwap == -1) {
-    		// create new swap
-    		thisSwap = this.createSwapFile(pid);
-    	}
-    	
-    	// write to the swap file
-    	krnFSDD.write(thisSwap.fileName, ACTIVE, memory);
-    	
-    };
-    
-    // find swap object in array by pid
-    this.findSwap = function(pid) {
-    	if(pid != null) {
-    		for(i in this._Swap) {
-    			if(this._Swap[i].pid = pid) {
-    				// match
-    				return this._Swap
-    			}		
-    		}
-    	}
-    	
-    	//nothing found
-    	return -1;
-    };
 
     
     

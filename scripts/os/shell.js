@@ -385,30 +385,25 @@ function shellInit() {
     			
     			// set the memory block in the pcb
     			thisPCB.update(block);
+
+				// add the commands to the assigned memory block
+				_MemoryManager.load(thisPCB, commandArray);
+				
+				// just for testing
+        		//thisPCB.x = "44";
+				
+				// set the state to loaded
+        		thisPCB.state = P_LOADED;
+				
+				// add the new created process to the processes array
+        		_Processes[lastPID] = thisPCB;
     			
-    			// check that there was a valid block avalable
-    			if(block > -1) {
-    				// add the commands to the assigned memory block
-    				_MemoryManager.load(block, commandArray);
-    				
-    				// just for testing
-	        		//thisPCB.x = "44";
-    				
-    				// set the state to loaded
-	        		thisPCB.state = P_LOADED;
-    				
-    				// add the new created process to the processes array
-	        		_Processes[lastPID] = thisPCB;
-	    			
-	        		// output the PID to the console
-	        		_StdIn.displayTextOnNewLine("New process created, PID : " + thisPCB.pid + " name: " + thisPCB.name);
-	        		
-	        		// increment the last pid
-	        		lastPID++;
-    			}
-    			else {
-    				_StdIn.displayTextOnNewLine("No free memory available!");
-    			}
+        		// output the PID to the console
+        		_StdIn.displayTextOnNewLine("New process created, PID : " + thisPCB.pid + " name: " + thisPCB.name);
+        		
+        		// increment the last pid
+        		lastPID++;
+
 
     		}
     		else {
