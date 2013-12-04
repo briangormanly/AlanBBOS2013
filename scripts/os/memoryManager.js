@@ -64,6 +64,12 @@ function MemoryManager() {
     	
     };
     
+    /**
+     * Randomly selects block of memory to swap out to disk
+     * Swaps out the memory to disk and marks the swaped out
+     * process as being swapped out.
+     * @return the block of memory freed
+     */
     this.swapout = function() {
     	// determine which memeory block to swapout (random)
     	var rand = Math.floor((Math.random()*3));
@@ -72,12 +78,34 @@ function MemoryManager() {
     	var PCBToSwap = getPCBByBlock(rand);
     	// get the block of memory to swap out
     	var slice = _Memory.slice((+PCBToSwap.block * MAX_PROGRAM_SIZE), ((+PCBToSwap.block * MAX_PROGRAM_SIZE) + MAX_PROGRAM_SIZE));
-    		//alert("slice : " + slice);
+    	
     	// move the memory block to swap
     	this.writeToSwap(PCBToSwap, slice);
     	
+    	// mark the active memory block as swapped out
+    	this.blockStatus[rand] = -1;
+    	_Processes[PCBToSwap.pid].block = -1;
+    	
+    	return rand;
     };
     
+    /**
+     * Swap process in from disk to free memory block
+     */
+    this.swapin = function(pcb, freeBlock) {
+    	// get the block from the disk
+    	var slice = krnFSDD.readFile("~SWAP" + pcb.pid + ".swp");
+    	
+    	// convert the string to an array
+    	var block = slice.split(",");
+    	
+    	// set the block of the pcb correctly
+    	pcb.block = freeBlock;
+    	_CPU.currentProcess.block = freeBlock;
+    	
+    	// load the block into memory
+    	this.load(_CPU.currentProcess, block);
+    };
     
     
     /**
@@ -104,7 +132,7 @@ function MemoryManager() {
     	
     	if(thisSwap == -1) {
     		// create new swap
-    		thisSwap = this.createSwapFile(pcb.pid);
+    		thisSwap = this.createSwapFile(pcb);
     	}
     	
     	// write the swap memory to swap file
@@ -137,7 +165,9 @@ function MemoryManager() {
     	
     };
     
-    
+    /**
+     * Load instructions into memory
+     */
     this.load = function(pcb, commandArray) {
     	// check to see if this is getting loaded into swap space
     	if(pcb.block === -1) {

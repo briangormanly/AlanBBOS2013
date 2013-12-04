@@ -53,8 +53,9 @@ function Scheduler() {
 		if(_CPU.currentProcess.block === -1) {
 			//process is swapped out
 			
-			// swap out
-			_MemoryManager.swapout();
+			// kick someone else out and swap in!
+			_MemoryManager.swapin(_CPU.currentProcess ,_MemoryManager.swapout());
+
 			
 			alert("done!");
 			
