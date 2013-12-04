@@ -64,6 +64,21 @@ function MemoryManager() {
     	
     };
     
+    this.swapout = function() {
+    	// determine which memeory block to swapout (random)
+    	var rand = Math.floor((Math.random()*3));
+    	
+    	// get the pcb of the winner
+    	var PCBToSwap = getPCBByBlock(rand);
+    	// get the block of memory to swap out
+    	var slice = _Memory.slice((+PCBToSwap.block * MAX_PROGRAM_SIZE), ((+PCBToSwap.block * MAX_PROGRAM_SIZE) + MAX_PROGRAM_SIZE));
+    		//alert("slice : " + slice);
+    	// move the memory block to swap
+    	this.writeToSwap(PCBToSwap, slice);
+    	
+    };
+    
+    
     
     /**
 	 * create a swap file
@@ -80,20 +95,20 @@ function MemoryManager() {
     	
     };
     
-    this.writeToSwap = function(pid, memory) {
+    this.writeToSwap = function(pcb, memory) {
     	// check to see if a valid swap file exists for this process
-    	var thisSwap = this.findSwap(pid);
+    	var thisSwap = this.findSwap(pcb.pid);
     	
     	// get the filename ready
-    	var fileName = "~SWAP" + pid + ".swp";
+    	var fileName = "~SWAP" + pcb.pid + ".swp";
     	
     	if(thisSwap == -1) {
     		// create new swap
-    		thisSwap = this.createSwapFile(pid);
+    		thisSwap = this.createSwapFile(pcb.pid);
     	}
     	
     	// write the swap memory to swap file
-    	krnFSDD.write(fileName, ACTIVE, memory);
+    	krnFSDD.write(fileName, ACTIVE, memory.toString());
     	
     };
     
@@ -101,7 +116,7 @@ function MemoryManager() {
     this.findSwap = function(pid) {
     	// generate the name of the swap file
     	var fileName = "~SWAP" + pid + ".swp";
-    	
+
     	// search for the file
     	var dirTSB = krnFSDD.getTSBByName(fileName);
     	
@@ -127,7 +142,7 @@ function MemoryManager() {
     	// check to see if this is getting loaded into swap space
     	if(pcb.block === -1) {
     		// write to swap
-    		this.writeToSwap(pcb.pid, commandArray);
+    		this.writeToSwap(pcb, commandArray);
     		
     		
     	}

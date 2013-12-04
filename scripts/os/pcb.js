@@ -58,4 +58,16 @@ function getPCBByProcessName(name) {
 	// no match found return -1
 	return -1;
 }
+
+function getPCBByBlock(block) {
+	if(block != null) {
+		for(i in this._Processes) {
+			if(this._Processes[i].block == block) {
+				// match
+				return this._Processes[i];
+			}
+		}
+	}
+}
+
 	

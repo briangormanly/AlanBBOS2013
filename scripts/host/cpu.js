@@ -14,7 +14,7 @@
    ------------ */
 
 function Cpu() {
-	this.pid
+	this.pid;
     this.pc = 0;     // Program Counter
     this.acc = 0;     // Accumulator
     this.state = 0; // current process state
@@ -33,7 +33,7 @@ function Cpu() {
     this.opCode = "";
     
     this.init = function() {
-    	this.pid
+    	this.pid;
         this.pc = 0;
         this.acc = 0;
         this.x = 0;
@@ -49,7 +49,7 @@ function Cpu() {
         // check with the scheduler for a process to run
         _Scheduler.processToRun();
         
-        if(this.currentProcess != null && this.currentProcess.state != P_TERMINATED) {
+        if(this.currentProcess != null && this.currentProcess.state === P_READY) {
 	        this.currentProcess.state = P_RUNNING;
 	        
 	        // log the process running

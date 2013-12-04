@@ -48,6 +48,18 @@ function Scheduler() {
 				roundRobin();
 				break;
 		}
+		
+		// check to see if the current process is in memory
+		if(_CPU.currentProcess.block === -1) {
+			//process is swapped out
+			
+			// swap out
+			_MemoryManager.swapout();
+			
+			alert("done!");
+			
+		}
+		
 	}
 	
 	// detirme process to run based on round robin out algorithm
