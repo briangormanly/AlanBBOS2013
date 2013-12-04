@@ -360,6 +360,7 @@ function Cpu() {
     function sysBreak() {
     	this.pc = 0;
     	this.state = P_TERMINATED;
+    	_Scheduler.cleanUpProcess(this.currentProcess);
 
     }
     

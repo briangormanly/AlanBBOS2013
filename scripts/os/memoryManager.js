@@ -103,6 +103,10 @@ function MemoryManager() {
     	pcb.block = freeBlock;
     	_CPU.currentProcess.block = freeBlock;
     	
+    	// mark the swap file as un-used 
+    		// removed because it was not playing nice
+    	//krnFSDD.removeByFileName("~SWAP" + pcb.pid + ".swp");
+    	
     	// load the block into memory
     	this.load(_CPU.currentProcess, block);
     };
@@ -185,11 +189,6 @@ function MemoryManager() {
 				
 			}
     	}
-    	
-    	
-    	
-    	
-		//alert(_Memory);
     };
     
     
@@ -206,11 +205,9 @@ function MemoryManager() {
     		_StdIn.displayTextOnNewLine("Process ended unexpectedly.");
     		
     		// end the process
-    		pcb.state = P_TERMINATED;
-    		//_CPU.state = P_TERMINATED;
-    		//_CPU.currentProcess = P_TERMINATED;
+    		_Scheduler.cleanUpProcess(pcb);
+    		//pcb.state = P_TERMINATED;
     		
-    		//alert(pcb.pid + " " + pcb.name + " " + pcb.state);
     		
     	}
     	else {
@@ -232,8 +229,8 @@ function MemoryManager() {
     		_StdIn.displayTextOnNewLine("Process ended unexpectedly.");
     		
     		// end the process
-    		//alert(pcb.pid + " " + pcb.name + " " + pcb.state);
-    		pcb.state = P_TERMINATED;
+    		_Scheduler.cleanUpProcess(pcb);
+    		//pcb.state = P_TERMINATED;
     		
     	}
     	else {

@@ -296,7 +296,8 @@ function shellInit() {
     	// check that the user provided a valid argument
     	if (args.length > 0 && args[0] >= 0 && (_Processes[args[0]].state === P_RUNNING || _Processes[args[0]].state === P_READY)) {
     		// try to terminate the process
-    		_Processes[args[0]].state = P_TERMINATED;
+    		_Scheduler.cleanUpProcess(_Processes[args[0]]);
+    		//_Processes[args[0]].state = P_TERMINATED;
     	}
     	else {
     		// tell user to enter a valid pid

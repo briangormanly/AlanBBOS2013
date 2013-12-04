@@ -29,7 +29,6 @@ function Scheduler() {
      */
 	this.updateProcess = function(pcb) {
 		_Processes[pcb.pid] = pcb;
-		//alert("updated pid " + pcb.pid + " state: " + _Processes[pcb.pid].state);
 	}
 	
     
@@ -55,13 +54,25 @@ function Scheduler() {
 			
 			// kick someone else out and swap in!
 			_MemoryManager.swapin(_CPU.currentProcess ,_MemoryManager.swapout());
-
-			
-			alert("done!");
 			
 		}
 		
-	}
+	};
+	
+	this.cleanUpProcess = function(pcb) {
+		// set terminated
+		pcb.state = P_TERMINATED;
+		
+		// free up memory
+		pcb.block = -1;
+		
+		// see if there is a swap file to clean up
+		krnFSDD.removeByFileName("~SWAP" + pcb.pid + ".swp");
+		
+		//update in the _Processes array
+		this.updateProcess(pcb.pid);
+	};
+	
 	
 	// detirme process to run based on round robin out algorithm
 	// make the process the current process
