@@ -60,7 +60,7 @@ function FSDD() {
 			}
 			
 			// set the mbr
-			_Disk.write("000", "1100Swap file location");
+			_Disk.write("000", "1100Khaaaaaaaaaaaaaaaaaaaaaaaan!!!!!!!!!!!!!!!!!!!!!!!!!");
     	}
     	catch(e) {
     		
@@ -133,7 +133,7 @@ function FSDD() {
      * @return -1 if error, 1 if successful
      */
     this.write = function(fileName, active, data) {
-    	
+    	//alert(fileName + " | " + active + " | " + data);
     	// get the directory tsb
     	var dirTSB = this.getTSBByName(fileName);
 

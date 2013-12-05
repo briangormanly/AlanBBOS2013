@@ -271,6 +271,164 @@ function shellInit() {
     this.commandList[this.commandList.length] = sc;
     
     
+    
+    // write to a file
+    sc = new ShellCommand();
+    sc.command = "vim";
+    sc.description = "- write to a file pass name as parameter 1 the data comes from the program input area";
+    sc.function = (function(args){
+    	// check that the user provided a valid argument
+    	if (args.length > 0) {
+    		// check the length of the filename 
+    		if (args[0].length <= 57) {
+    			// check the data
+    			
+    			// create the file
+    			if(krnFSDD.create(args[0], MODE_RWX, LOCK_INACTIVE) != -1) {
+    				// write the data
+        			
+					if(krnFSDD.write(args[0], ACTIVE, document.getElementById('taProgramInput').value) == 1) {
+						// success!
+						_StdIn.displayTextOnNewLine("File written to successfully!");
+					}
+					else {
+						_StdIn.displayTextOnNewLine("Invalid filename!");
+					}
+    			}
+    			
+    			
+
+    			
+    		}
+    		else {
+    			// tell the user the filename was too long
+    			_StdIn.displayTextOnNewLine("Please provide a valid file name less then 57 characters!");
+    		}
+    	}
+    	else {
+    		// tell user to enter a valid pid
+    		_StdIn.displayTextOnNewLine("Please provide a valid file name!");
+    	}
+        
+    });
+    this.commandList[this.commandList.length] = sc;
+    
+    
+
+    // delete file
+    sc = new ShellCommand();
+    sc.command = "execute";
+    sc.description = "- execute a file pass name as parameter";
+    sc.function = (function(args){
+    	// check that the user provided a valid argument
+    	if (args.length > 0) {
+    		// check the length of the filename 
+    		if (args[0].length <= 57) {
+    			
+    			
+    			// get the file
+    			var filedata = krnFSDD.readFile(args[0]);
+    			
+    			// check
+    			if(filedata != -1) {
+    				
+			    	// get the input from the program input area
+			    	var input = filedata.toUpperCase();
+			    	
+			    	// create a regex for hex input
+			    	var hex = /^[a-f0-9]$/i;
+			    	
+			    	// check it
+			    	if(input.match("[0-9A-F]")) {
+			    		//valid load the program code into memory
+			    		
+			    		// create an array to hold each command
+			    		var commandArray = input.split(" ");
+			
+			    		// check to ensure thot the program is not larger then the max
+			    		if(commandArray.length <= MAX_PROGRAM_SIZE) {
+			
+			        		// create the process control block
+			        		var thisPCB = new PCB(lastPID, args[0], P_NEW, 0);
+				
+			        		// allocate memory
+			    			var block = _MemoryManager.alloc(thisPCB);
+			    			
+			    			// set the memory block in the pcb
+			    			thisPCB.update(block);
+			
+			    			
+							// add the commands to the assigned memory block
+							_MemoryManager.load(thisPCB, commandArray);
+							
+							// just for testing
+			        		//thisPCB.x = "44";
+							
+							// set the state to loaded
+			        		thisPCB.state = P_LOADED;
+							
+							// add the new created process to the processes array
+			        		_Processes[lastPID] = thisPCB;
+			    			
+			        		// output the PID to the console
+			        		_StdIn.displayTextOnNewLine("New process created, PID : " + thisPCB.pid + " name: " + thisPCB.name);
+
+			        		// check that our pid is valid
+				    		if(thisPCB.pid != null && thisPCB.pid > -1) {
+				    			// sucess!
+				    			
+				    			// set the CPU to running
+				    			_CPU.isExecuting = true;
+				    			
+				    			// ask the schuduler to schedule the process
+				    			_Scheduler.requestRun(thisPCB.pid);
+				    			
+				    		}
+				    		else {
+				    			// fail!
+				    			_StdIn.displayTextOnNewLine("Process failed to run, no process found with givin process ID or name!");
+				    		}
+
+			    			// increment the last pid
+			        		lastPID++;
+			
+			    		}
+			    		else {
+			    			//alert(commandArray.length);
+			    			// program was to large!
+			    			_StdIn.displayTextOnNewLine("The program could not be loaded because it was to large!");
+			    		}
+			    		
+			    		// update the memory div
+			    		hostDivMemory();
+			    		//	alert(_Memory);
+			    	}
+			    	else {
+			    		// invalid tell the user why
+			    		_StdIn.displayTextOnNewLine("This is not valid input, Hex and spaces only please.");
+			    	}
+
+		    	}
+    			else {
+    				// tell the user the filename was too long
+    				_StdIn.displayTextOnNewLine("Not a valid executable file!");
+    			}
+
+    		}
+    		else {
+    			// tell the user the filename was too long
+    			_StdIn.displayTextOnNewLine("Please provide a valid file name less then 57 characters!");
+    		}
+    	}
+    	else {
+    		// tell user to enter a valid pid
+    		_StdIn.displayTextOnNewLine("Please provide a valid file name!");
+    	}
+    });
+    this.commandList[this.commandList.length] = sc;
+    
+    
+    
     // delete file
     sc = new ShellCommand();
     sc.command = "delete";
