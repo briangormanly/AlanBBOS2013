@@ -419,11 +419,12 @@ function FSDD() {
 	 * @return fileLock
 	 */
 	this.getDirFileActive = function(tsbString) {
-		if(_Disk.read(tsbString) === 0) {
-			return INACTIVE;
-		}
-		else if(_Disk.read(tsbString).substring(0, 1) === 1) {
+		if(_Disk.read(tsbString).substring(0, 1) == 1) {
 			return ACTIVE;
+		}
+		else  {
+			
+			return INACTIVE;
 		}
 	};
 	
@@ -467,25 +468,25 @@ function FSDD() {
 		if(_Disk.read(tsbString).substring(4, 5) === 0) {
 			return MODE_NONE;
 		}
-		else if(_Disk.read(tsbString).substring(4, 5) === 1) {
+		else if(_Disk.read(tsbString).substring(4, 5) == 1) {
 			return MODE_X;
 		}
-		else if(_Disk.read(tsbString).substring(4, 5) === 2) {
+		else if(_Disk.read(tsbString).substring(4, 5) == 2) {
 			return MODE_W;
 		}
-		else if(_Disk.read(tsbString).substring(4, 5) === 3) {
+		else if(_Disk.read(tsbString).substring(4, 5) == 3) {
 			return MODE_WX;
 		}
-		else if(_Disk.read(tsbString).substring(4, 5) === 4) {
+		else if(_Disk.read(tsbString).substring(4, 5) == 4) {
 			return MODE_R;
 		}
-		else if(_Disk.read(tsbString).substring(4, 5) === 5) {
+		else if(_Disk.read(tsbString).substring(4, 5) == 5) {
 			return MODE_RX;
 		}
-		else if(_Disk.read(tsbString).substring(4, 5) === 6) {
+		else if(_Disk.read(tsbString).substring(4, 5) == 6) {
 			return MODE_RW;
 		}
-		else if(_Disk.read(tsbString).substring(4, 5) === 7) {
+		else if(_Disk.read(tsbString).substring(4, 5) == 7) {
 			return MODE_RWX;
 		}
 		else {
@@ -516,7 +517,13 @@ function FSDD() {
 	 * @return fileSize
 	 */
 	this.getDirFileSize = function(tsbString) {
-		return _Disk.read(tsbString).substring(6, 8);
+		if(_Disk.read(tsbString) != null) {
+			return _Disk.read(tsbString).substring(6, 8);
+		}
+		else {
+			return -1;
+		}
+		
 	};
 	
 	/**
@@ -730,6 +737,69 @@ function FSDD() {
 		hostDivDisk();
 	};
 	
-    
+	this.getDirectoryListing = function() {
+		// create a string to collect info
+		var totalString = "";
+		
+		// iterate through directory and get info on all active files
+		for(var i=0; i<DIRECTORY_TRACKS; i++) {
+			for(var j=0; j<SECTORS; j++) {
+				for(var k=0; k<BLOCKS; k++) {
+					// create a unique key out of the track sector and block
+					var tsbString = i.toString() + j.toString() + k.toString();
+					
+					// check to see if the file is active
+					if(this.getDirFileActive(tsbString) === 1 && tsbString != "000") {
+						
+						// get the file info as a string to add to the dir listing
+						var thisFileName = this.getDirFileName(tsbString);
+						var thisFilePermissions = "";
+						
+						switch(this.getDirFileMode(tsbString)) {
+							case MODE_NONE:
+								thisFilePermissions = "---";
+								break;
+							case MODE_X:
+								thisFilePermissions = "--X";
+								break;
+							case MODE_W:
+								thisFilePermissions = "-W-";
+								break;
+							case MODE_WX:
+								thisFilePermissions = "-WX";
+								break;
+							case MODE_R:
+								thisFilePermissions = "R--";
+								break;
+							case MODE_RX:
+								thisFilePermissions = "R-X";
+								break;
+							case MODE_RW:
+								thisFilePermissions = "RW-";
+								break;
+							case MODE_RWX:
+								thisFilePermissions = "RWX";
+								break;
+						}
+						
+						var thisFileSize = (this.getDirFileSize(tsbString) * BLOCK_SIZE);
+						
+						// combine string
+						var fileString =  thisFilePermissions + " | " + thisFileSize + " | " + thisFileName;
+						
+						// add it to the totalString
+						totalString += fileString + ",";
+					}
+					
+					
+				}
+			}
+		}
+		
+		// return the direcotry listing
+		return totalString;
+	};
+	
+	
 }
     
